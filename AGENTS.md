@@ -209,3 +209,31 @@ make tests
 - ✅ Public APIs and user-facing behavior changes are documented.
 - ✅ Examples are updated if behavior changes.
 - ✅ History is clean with a clear PR description.
+
+## Cursor Cloud specific instructions
+
+### Environment
+
+- Python 3.12 with `uv` for dependency management. `python3-dev` is required for building `evdev` (transitive dep via `pynput`).
+- All dev dependencies install via `make sync` (`uv sync --all-extras --all-packages --group dev`).
+- `uv` is installed to `~/.local/bin`; ensure `PATH` includes it.
+
+### Running services
+
+This is a Python library SDK (no long-running services). The primary development loop is:
+
+| Command | Purpose |
+|---|---|
+| `make format` | Auto-format with ruff |
+| `make lint` | Lint check |
+| `make mypy` | Type checking (takes ~100s) |
+| `make tests` | Full test suite (~55s, 2100+ tests) |
+| `make check` | All of the above |
+
+### Key caveats
+
+- Tests run fully offline using `FakeModel` mocks; no `OPENAI_API_KEY` needed for `make tests`.
+- Running examples (e.g. `uv run python examples/basic/hello_world.py`) requires `OPENAI_API_KEY`.
+- Pre-existing lint/mypy errors exist in `refcheckarena/` directory; these are not part of the core SDK.
+- `make mypy` is slow (~100s) because it checks 480+ source files with strict mode.
+- Use `uv run pytest -s -k <pattern>` for targeted test runs.
