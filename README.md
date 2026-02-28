@@ -19,7 +19,7 @@ Explore the [examples](examples) directory to see the SDK in action, and read ou
 
 ## Get started
 
-To get started, set up your Python environment (Python 3.9 or newer required), and then install OpenAI Agents SDK package.
+To get started, set up your Python environment (Python 3.10 or newer required), and then install OpenAI Agents SDK package.
 
 ### venv
 
@@ -162,7 +162,7 @@ The Agents SDK automatically traces your agent runs, making it easy to track and
 
 ## Long running agents & human-in-the-loop
 
-You can use the Agents SDK [Temporal](https://temporal.io/) integration to run durable, long-running workflows, including human-in-the-loop tasks. View a demo of Temporal and the Agents SDK working in action to complete long-running tasks [in this video](https://www.youtube.com/watch?v=fFBZqzT4DD8), and [view docs here](https://github.com/temporalio/sdk-python/tree/main/temporalio/contrib/openai_agents).
+There are several options for long-running agents. Refer to [the documentation](https://openai.github.io/openai-agents-python/running_agents/#long-running-agents-human-in-the-loop) for details.
 
 ## Sessions
 

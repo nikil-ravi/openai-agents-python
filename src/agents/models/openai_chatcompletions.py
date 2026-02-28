@@ -119,11 +119,24 @@ class OpenAIChatCompletionsModel(Model):
                     [message.model_dump()] if message is not None else []
                 )
             span_generation.span_data.usage = {
+                "requests": usage.requests,
                 "input_tokens": usage.input_tokens,
                 "output_tokens": usage.output_tokens,
+                "total_tokens": usage.total_tokens,
+                "input_tokens_details": usage.input_tokens_details.model_dump(),
+                "output_tokens_details": usage.output_tokens_details.model_dump(),
             }
 
-            items = Converter.message_to_output_items(message) if message is not None else []
+            # Build provider_data for provider_specific_fields
+            provider_data = {"model": self.model}
+            if message is not None and hasattr(response, "id"):
+                provider_data["response_id"] = response.id
+
+            items = (
+                Converter.message_to_output_items(message, provider_data=provider_data)
+                if message is not None
+                else []
+            )
 
             logprob_models = None
             if first_choice and first_choice.logprobs and first_choice.logprobs.content:
@@ -187,7 +200,9 @@ class OpenAIChatCompletionsModel(Model):
             )
 
             final_response: Response | None = None
-            async for chunk in ChatCmplStreamHandler.handle_stream(response, stream):
+            async for chunk in ChatCmplStreamHandler.handle_stream(
+                response, stream, model=self.model
+            ):
                 yield chunk
 
                 if chunk.type == "response.completed":
@@ -198,8 +213,20 @@ class OpenAIChatCompletionsModel(Model):
 
             if final_response and final_response.usage:
                 span_generation.span_data.usage = {
+                    "requests": 1,
                     "input_tokens": final_response.usage.input_tokens,
                     "output_tokens": final_response.usage.output_tokens,
+                    "total_tokens": final_response.usage.total_tokens,
+                    "input_tokens_details": (
+                        final_response.usage.input_tokens_details.model_dump()
+                        if final_response.usage.input_tokens_details
+                        else {"cached_tokens": 0}
+                    ),
+                    "output_tokens_details": (
+                        final_response.usage.output_tokens_details.model_dump()
+                        if final_response.usage.output_tokens_details
+                        else {"reasoning_tokens": 0}
+                    ),
                 }
 
     @overload
@@ -245,7 +272,7 @@ class OpenAIChatCompletionsModel(Model):
         stream: bool = False,
         prompt: ResponsePromptParam | None = None,
     ) -> ChatCompletion | tuple[Response, AsyncStream[ChatCompletionChunk]]:
-        converted_messages = Converter.items_to_messages(input)
+        converted_messages = Converter.items_to_messages(input, model=self.model)
 
         if system_instructions:
             converted_messages.insert(

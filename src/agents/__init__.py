@@ -26,6 +26,7 @@ from .exceptions import (
     RunErrorDetails,
     ToolInputGuardrailTripwireTriggered,
     ToolOutputGuardrailTripwireTriggered,
+    ToolTimeoutError,
     UserError,
 )
 from .guardrail import (
@@ -49,13 +50,17 @@ from .handoffs import (
     set_conversation_history_wrappers,
 )
 from .items import (
+    CompactionItem,
     HandoffCallItem,
     HandoffOutputItem,
     ItemHelpers,
+    MCPApprovalRequestItem,
+    MCPApprovalResponseItem,
     MessageOutputItem,
     ModelResponse,
     ReasoningItem,
     RunItem,
+    ToolApprovalItem,
     ToolCallItem,
     ToolCallOutputItem,
     TResponseInputItem,
@@ -63,21 +68,41 @@ from .items import (
 from .lifecycle import AgentHooks, RunHooks
 from .memory import (
     OpenAIConversationsSession,
+    OpenAIResponsesCompactionArgs,
+    OpenAIResponsesCompactionAwareSession,
+    OpenAIResponsesCompactionSession,
     Session,
     SessionABC,
+    SessionSettings,
     SQLiteSession,
+    is_openai_responses_compaction_aware_session,
 )
 from .model_settings import ModelSettings
 from .models.interface import Model, ModelProvider, ModelTracing
 from .models.multi_provider import MultiProvider
 from .models.openai_chatcompletions import OpenAIChatCompletionsModel
 from .models.openai_provider import OpenAIProvider
-from .models.openai_responses import OpenAIResponsesModel
+from .models.openai_responses import OpenAIResponsesModel, OpenAIResponsesWSModel
 from .prompts import DynamicPromptFunction, GenerateDynamicPromptData, Prompt
 from .repl import run_demo_loop
+from .responses_websocket_session import ResponsesWebSocketSession, responses_websocket_session
 from .result import RunResult, RunResultStreaming
-from .run import RunConfig, Runner
+from .run import (
+    ReasoningItemIdPolicy,
+    RunConfig,
+    Runner,
+    ToolErrorFormatter,
+    ToolErrorFormatterArgs,
+)
 from .run_context import AgentHookContext, RunContextWrapper, TContext
+from .run_error_handlers import (
+    RunErrorData,
+    RunErrorHandler,
+    RunErrorHandlerInput,
+    RunErrorHandlerResult,
+    RunErrorHandlers,
+)
+from .run_state import RunState
 from .stream_events import (
     AgentUpdatedStreamEvent,
     RawResponsesStreamEvent,
@@ -108,6 +133,20 @@ from .tool import (
     ShellExecutor,
     ShellResult,
     ShellTool,
+    ShellToolContainerAutoEnvironment,
+    ShellToolContainerNetworkPolicy,
+    ShellToolContainerNetworkPolicyAllowlist,
+    ShellToolContainerNetworkPolicyDisabled,
+    ShellToolContainerNetworkPolicyDomainSecret,
+    ShellToolContainerReferenceEnvironment,
+    ShellToolContainerSkill,
+    ShellToolEnvironment,
+    ShellToolHostedEnvironment,
+    ShellToolInlineSkill,
+    ShellToolInlineSkillSource,
+    ShellToolLocalEnvironment,
+    ShellToolLocalSkill,
+    ShellToolSkillReference,
     Tool,
     ToolOutputFileContent,
     ToolOutputFileContentDict,
@@ -208,6 +247,15 @@ def set_default_openai_api(api: Literal["chat_completions", "responses"]) -> Non
     _config.set_default_openai_api(api)
 
 
+def set_default_openai_responses_transport(transport: Literal["http", "websocket"]) -> None:
+    """Set the default transport for OpenAI Responses API requests.
+
+    By default, the Responses API uses the HTTP transport. Set this to ``"websocket"`` to use
+    websocket transport when the OpenAI provider resolves a Responses model.
+    """
+    _config.set_default_openai_responses_transport(transport)
+
+
 def enable_verbose_stdout_logging():
     """Enables verbose logging to stdout. This is useful for debugging."""
     logger = logging.getLogger("openai.agents")
@@ -238,6 +286,7 @@ __all__ = [
     "MultiProvider",
     "OpenAIProvider",
     "OpenAIResponsesModel",
+    "OpenAIResponsesWSModel",
     "AgentOutputSchema",
     "AgentOutputSchemaBase",
     "Computer",
@@ -254,6 +303,7 @@ __all__ = [
     "Prompt",
     "MaxTurnsExceeded",
     "ModelBehaviorError",
+    "ToolTimeoutError",
     "UserError",
     "InputGuardrail",
     "InputGuardrailResult",
@@ -281,6 +331,9 @@ __all__ = [
     "RunItem",
     "HandoffCallItem",
     "HandoffOutputItem",
+    "ToolApprovalItem",
+    "MCPApprovalRequestItem",
+    "MCPApprovalResponseItem",
     "ToolCallItem",
     "ToolCallOutputItem",
     "ReasoningItem",
@@ -289,15 +342,31 @@ __all__ = [
     "AgentHooks",
     "Session",
     "SessionABC",
+    "SessionSettings",
     "SQLiteSession",
     "OpenAIConversationsSession",
+    "OpenAIResponsesCompactionSession",
+    "OpenAIResponsesCompactionArgs",
+    "OpenAIResponsesCompactionAwareSession",
+    "is_openai_responses_compaction_aware_session",
+    "CompactionItem",
     "AgentHookContext",
     "RunContextWrapper",
     "TContext",
     "RunErrorDetails",
+    "RunErrorData",
+    "RunErrorHandler",
+    "RunErrorHandlerInput",
+    "RunErrorHandlerResult",
+    "RunErrorHandlers",
     "RunResult",
     "RunResultStreaming",
+    "ResponsesWebSocketSession",
     "RunConfig",
+    "ReasoningItemIdPolicy",
+    "ToolErrorFormatter",
+    "ToolErrorFormatterArgs",
+    "RunState",
     "RawResponsesStreamEvent",
     "RunItemStreamEvent",
     "AgentUpdatedStreamEvent",
@@ -317,6 +386,20 @@ __all__ = [
     "ShellCallOutcome",
     "ShellCommandOutput",
     "ShellCommandRequest",
+    "ShellToolLocalSkill",
+    "ShellToolSkillReference",
+    "ShellToolInlineSkillSource",
+    "ShellToolInlineSkill",
+    "ShellToolContainerSkill",
+    "ShellToolContainerNetworkPolicyDomainSecret",
+    "ShellToolContainerNetworkPolicyAllowlist",
+    "ShellToolContainerNetworkPolicyDisabled",
+    "ShellToolContainerNetworkPolicy",
+    "ShellToolLocalEnvironment",
+    "ShellToolContainerAutoEnvironment",
+    "ShellToolContainerReferenceEnvironment",
+    "ShellToolHostedEnvironment",
+    "ShellToolEnvironment",
     "ShellExecutor",
     "ShellResult",
     "ShellTool",
@@ -375,6 +458,8 @@ __all__ = [
     "set_default_openai_key",
     "set_default_openai_client",
     "set_default_openai_api",
+    "set_default_openai_responses_transport",
+    "responses_websocket_session",
     "set_tracing_export_api_key",
     "enable_verbose_stdout_logging",
     "gen_trace_id",

@@ -35,6 +35,22 @@ if __name__ == "__main__":
 
 [`RunItemStreamEvent`][agents.stream_events.RunItemStreamEvent]s are higher level events. They inform you when an item has been fully generated. This allows you to push progress updates at the level of "message generated", "tool ran", etc, instead of each token. Similarly, [`AgentUpdatedStreamEvent`][agents.stream_events.AgentUpdatedStreamEvent] gives you updates when the current agent changes (e.g. as the result of a handoff).
 
+### Run item event names
+
+`RunItemStreamEvent.name` uses a fixed set of semantic event names:
+
+-   `message_output_created`
+-   `handoff_requested`
+-   `handoff_occured`
+-   `tool_called`
+-   `tool_output`
+-   `reasoning_item_created`
+-   `mcp_approval_requested`
+-   `mcp_approval_response`
+-   `mcp_list_tools`
+
+`handoff_occured` is intentionally misspelled for backward compatibility.
+
 For example, this will ignore raw events and stream updates to the user.
 
 ```python

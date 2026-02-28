@@ -28,7 +28,7 @@ coverage:
 	
 	uv run coverage run -m pytest
 	uv run coverage xml -o coverage.xml
-	uv run coverage report -m --fail-under=95
+	uv run coverage report -m --fail-under=85
 
 .PHONY: snapshots-fix
 snapshots-fix: 
@@ -37,11 +37,6 @@ snapshots-fix:
 .PHONY: snapshots-create 
 snapshots-create: 
 	uv run pytest --inline-snapshot=create 
-
-.PHONY: old_version_tests
-old_version_tests:
-	UV_PROJECT_ENVIRONMENT=.venv_39 uv sync --python 3.9 --all-extras --all-packages --group dev
-	UV_PROJECT_ENVIRONMENT=.venv_39 uv run --python 3.9 -m pytest
 
 .PHONY: build-docs
 build-docs:

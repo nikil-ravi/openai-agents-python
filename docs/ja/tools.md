@@ -4,23 +4,40 @@ search:
 ---
 # ツール
 
-ツールは エージェント がアクションを実行できるようにします。例えば、データの取得、コードの実行、外部 API の呼び出し、さらにはコンピュータの使用などです。Agents SDK には 3 つのクラスのツールがあります。
+ツールにより、エージェントはアクションを実行できます。たとえば、データの取得、コードの実行、外部 API の呼び出し、さらにはコンピュータの使用などです。この SDK は 5 つのカテゴリーをサポートします。
 
-- Hosted tools: これらは AI モデルと同じ LLM サーバー上で動作します。OpenAI は retrieval、Web 検索、コンピュータ操作 を Hosted tools として提供します。
-- Function calling: 任意の Python 関数をツールとして使用できます。
-- Agents as tools: エージェント をツールとして使用でき、ハンドオフ せずに別の エージェント を呼び出せます。
+-   OpenAI がホストするツール: OpenAI サーバー上でモデルと並行して実行されます。
+-   ローカルランタイムツール: お使いの環境で実行されます (コンピュータ操作、シェル、パッチ適用)。
+-   Function Calling: 任意の Python 関数をツールとしてラップします。
+-   Agents as tools: フルの ハンドオフ なしで、エージェントを呼び出し可能なツールとして公開します。
+-   実験的: Codex ツール: ツール呼び出しから、ワークスペース範囲の Codex タスクを実行します。
 
-## Hosted tools
+## ツールタイプ選択
 
-OpenAI は [`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel] を使用する際に、いくつかの組み込みツールを提供します。
+このページをカタログとして使い、制御できるランタイムに合うセクションへ移動してください。
 
-- [`WebSearchTool`][agents.tool.WebSearchTool] は エージェント が Web を検索できるようにします。
-- [`FileSearchTool`][agents.tool.FileSearchTool] は OpenAI ベクトルストア から情報を取得できます。
-- [`ComputerTool`][agents.tool.ComputerTool] は コンピュータ操作 の自動化を可能にします。
-- [`CodeInterpreterTool`][agents.tool.CodeInterpreterTool] は LLM がサンドボックス環境でコードを実行できるようにします。
-- [`HostedMCPTool`][agents.tool.HostedMCPTool] はリモートの MCP サーバーのツールをモデルに公開します。
-- [`ImageGenerationTool`][agents.tool.ImageGenerationTool] はプロンプトから画像を生成します。
-- [`LocalShellTool`][agents.tool.LocalShellTool] はローカルマシンでシェルコマンドを実行します。
+| もしあなたが...したいなら | ここから始めてください |
+| --- | --- |
+| OpenAI 管理ツール (Web 検索、ファイル検索、Code Interpreter、ホストされる MCP、画像生成) を使う | [ホストされるツール](#hosted-tools) |
+| 自分のプロセスまたは環境でツールを実行する | [ローカルランタイムツール](#local-runtime-tools) |
+| Python 関数をツールとしてラップする | [関数ツール](#function-tools) |
+| ハンドオフ なしであるエージェントから別のエージェントを呼び出す | [Agents as tools](#agents-as-tools) |
+| エージェントからワークスペース範囲の Codex タスクを実行する | [実験的: Codex ツール](#experimental-codex-tool) |
+
+## ホストされるツール
+
+OpenAI は、[`OpenAIResponsesModel`][agents.models.openai_responses.OpenAIResponsesModel] を使用する際に、いくつかの組み込みツールを提供します。
+
+-   [`WebSearchTool`][agents.tool.WebSearchTool] は、エージェントが Web を検索できるようにします。
+-   [`FileSearchTool`][agents.tool.FileSearchTool] は、OpenAI ベクトルストアから情報を取得できるようにします。
+-   [`CodeInterpreterTool`][agents.tool.CodeInterpreterTool] は、LLM がサンドボックス化された環境でコードを実行できるようにします。
+-   [`HostedMCPTool`][agents.tool.HostedMCPTool] は、リモート MCP サーバーのツールをモデルに公開します。
+-   [`ImageGenerationTool`][agents.tool.ImageGenerationTool] は、プロンプトから画像を生成します。
+
+高度なホスト型検索オプション:
+
+-   `FileSearchTool` は、`vector_store_ids` と `max_num_results` に加えて、`filters`、`ranking_options`、`include_search_results` をサポートします。
+-   `WebSearchTool` は、`filters`、`user_location`、`search_context_size` をサポートします。
 
 ```python
 from agents import Agent, FileSearchTool, Runner, WebSearchTool
@@ -41,16 +58,115 @@ async def main():
     print(result.final_output)
 ```
 
+### ホストされるコンテナシェル + スキル
+
+`ShellTool` は、OpenAI がホストするコンテナ実行もサポートします。ローカルランタイムではなく、管理されたコンテナ内でモデルにシェルコマンドを実行させたい場合は、このモードを使用してください。
+
+```python
+from agents import Agent, Runner, ShellTool, ShellToolSkillReference
+
+csv_skill: ShellToolSkillReference = {
+    "type": "skill_reference",
+    "skill_id": "skill_698bbe879adc81918725cbc69dcae7960bc5613dadaed377",
+    "version": "1",
+}
+
+agent = Agent(
+    name="Container shell agent",
+    model="gpt-5.2",
+    instructions="Use the mounted skill when helpful.",
+    tools=[
+        ShellTool(
+            environment={
+                "type": "container_auto",
+                "network_policy": {"type": "disabled"},
+                "skills": [csv_skill],
+            }
+        )
+    ],
+)
+
+result = await Runner.run(
+    agent,
+    "Use the configured skill to analyze CSV files in /mnt/data and summarize totals by region.",
+)
+print(result.final_output)
+```
+
+後続の実行で既存コンテナを再利用するには、`environment={"type": "container_reference", "container_id": "cntr_..."}` を設定します。
+
+知っておくべきこと:
+
+-   ホストされるシェルは、Responses API のシェルツールを通じて利用できます。
+-   `container_auto` はリクエスト向けにコンテナをプロビジョニングします。`container_reference` は既存のものを再利用します。
+-   `container_auto` には `file_ids` と `memory_limit` も含められます。
+-   `environment.skills` は、スキル参照とインラインのスキルバンドルを受け付けます。
+-   ホストされる環境では、`ShellTool` に `executor`、`needs_approval`、`on_approval` を設定しないでください。
+-   `network_policy` は `disabled` と `allowlist` のモードをサポートします。
+-   allowlist モードでは、`network_policy.domain_secrets` により、名前でドメインスコープのシークレットを注入できます。
+-   完全な例は `examples/tools/container_shell_skill_reference.py` と `examples/tools/container_shell_inline_skill.py` を参照してください。
+-   OpenAI プラットフォームガイド: [Shell](https://platform.openai.com/docs/guides/tools-shell) および [Skills](https://platform.openai.com/docs/guides/tools-skills)。
+
+## ローカルランタイムツール
+
+ローカルランタイムツールはお使いの環境で実行され、実装を提供する必要があります。
+
+-   [`ComputerTool`][agents.tool.ComputerTool]: GUI/ブラウザ自動化を有効化するには、[`Computer`][agents.computer.Computer] または [`AsyncComputer`][agents.computer.AsyncComputer] インターフェースを実装します。
+-   [`ShellTool`][agents.tool.ShellTool]: ローカル実行とホストされるコンテナ実行の両方に対応した最新のシェルツールです。
+-   [`LocalShellTool`][agents.tool.LocalShellTool]: 旧来の local-shell 統合です。
+-   [`ApplyPatchTool`][agents.tool.ApplyPatchTool]: 差分をローカルで適用するには [`ApplyPatchEditor`][agents.editor.ApplyPatchEditor] を実装します。
+-   ローカルシェルスキルは `ShellTool(environment={"type": "local", "skills": [...]})` で利用できます。
+
+```python
+from agents import Agent, ApplyPatchTool, ShellTool
+from agents.computer import AsyncComputer
+from agents.editor import ApplyPatchResult, ApplyPatchOperation, ApplyPatchEditor
+
+
+class NoopComputer(AsyncComputer):
+    environment = "browser"
+    dimensions = (1024, 768)
+    async def screenshot(self): return ""
+    async def click(self, x, y, button): ...
+    async def double_click(self, x, y): ...
+    async def scroll(self, x, y, scroll_x, scroll_y): ...
+    async def type(self, text): ...
+    async def wait(self): ...
+    async def move(self, x, y): ...
+    async def keypress(self, keys): ...
+    async def drag(self, path): ...
+
+
+class NoopEditor(ApplyPatchEditor):
+    async def create_file(self, op: ApplyPatchOperation): return ApplyPatchResult(status="completed")
+    async def update_file(self, op: ApplyPatchOperation): return ApplyPatchResult(status="completed")
+    async def delete_file(self, op: ApplyPatchOperation): return ApplyPatchResult(status="completed")
+
+
+async def run_shell(request):
+    return "shell output"
+
+
+agent = Agent(
+    name="Local tools agent",
+    tools=[
+        ShellTool(executor=run_shell),
+        ApplyPatchTool(editor=NoopEditor()),
+        # ComputerTool expects a Computer/AsyncComputer implementation; omitted here for brevity.
+    ],
+)
+```
+
 ## 関数ツール
 
 任意の Python 関数をツールとして使用できます。Agents SDK がツールを自動的にセットアップします。
 
-- ツール名は Python 関数名になります（任意で名前を指定可能）
-- ツールの説明は関数の docstring から取得されます（任意で説明を指定可能）
-- 関数入力のスキーマは関数の引数から自動的に作成されます
-- 各入力の説明は、無効化しない限り関数の docstring から取得されます
+-   ツール名は Python 関数名になります (または名前を指定できます)。
+-   ツールの説明は関数の docstring から取得されます (または説明を指定できます)。
+-   関数入力のスキーマは、関数の引数から自動的に作成されます。
+-   各入力の説明は、無効化されていない限り docstring から取得されます。
 
-Python の `inspect` モジュールで関数シグネチャを抽出し、[`griffe`](https://mkdocstrings.github.io/griffe/) で docstring を解析し、スキーマ作成には `pydantic` を使用します。
+関数シグネチャの抽出には Python の `inspect` モジュールを使用し、docstring の解析には [`griffe`](https://mkdocstrings.github.io/griffe/)、スキーマ作成には `pydantic` を使用します。
 
 ```python
 import json
@@ -102,12 +218,12 @@ for tool in agent.tools:
 
 ```
 
-1. 関数の引数として任意の Python 型を使用でき、関数は sync/async いずれでもかまいません。
-2. docstring があれば、説明や引数の説明の取得に使用します。
-3. 関数は任意で `context`（先頭の引数である必要があります）を受け取れます。ツール名、説明、docstring スタイルなどの上書きも設定できます。
-4. デコレートされた関数をツールのリストに渡せます。
+1.  関数の引数には任意の Python 型を使用でき、関数は sync/async いずれでも構いません。
+2.  docstrings が存在する場合、説明および引数説明の取得に使用されます。
+3.  関数は任意で `context` を受け取れます (第 1 引数である必要があります)。ツール名、説明、使用する docstring スタイルなどのオーバーライドも設定できます。
+4.  デコレートした関数をツール一覧へ渡せます。
 
-??? note "出力を表示するには展開してください"
+??? note "出力を表示するには展開"
 
     ```
     fetch_weather
@@ -177,22 +293,22 @@ for tool in agent.tools:
     }
     ```
 
-### 関数ツールから画像やファイルを返す
+### 関数ツールから画像またはファイルを返す
 
-テキスト出力に加えて、関数ツールの出力として 1 つまたは複数の画像やファイルを返すことができます。次のいずれかを返せます。
+テキスト出力を返すことに加えて、関数ツールの出力として 1 つ以上の画像またはファイルを返せます。そのためには、次のいずれかを返せます。
 
-- 画像: [`ToolOutputImage`][agents.tool.ToolOutputImage]（または TypedDict 版の [`ToolOutputImageDict`][agents.tool.ToolOutputImageDict]）
-- ファイル: [`ToolOutputFileContent`][agents.tool.ToolOutputFileContent]（または TypedDict 版の [`ToolOutputFileContentDict`][agents.tool.ToolOutputFileContentDict]）
-- テキスト: 文字列または文字列化可能なオブジェクト、もしくは [`ToolOutputText`][agents.tool.ToolOutputText]（または TypedDict 版の [`ToolOutputTextDict`][agents.tool.ToolOutputTextDict]）
+-   画像: [`ToolOutputImage`][agents.tool.ToolOutputImage] (または TypedDict 版の [`ToolOutputImageDict`][agents.tool.ToolOutputImageDict])
+-   ファイル: [`ToolOutputFileContent`][agents.tool.ToolOutputFileContent] (または TypedDict 版の [`ToolOutputFileContentDict`][agents.tool.ToolOutputFileContentDict])
+-   テキスト: 文字列、または文字列化可能なオブジェクト、もしくは [`ToolOutputText`][agents.tool.ToolOutputText] (または TypedDict 版の [`ToolOutputTextDict`][agents.tool.ToolOutputTextDict])
 
 ### カスタム関数ツール
 
-Python 関数をツールとして使いたくない場合もあります。必要に応じて、[`FunctionTool`][agents.tool.FunctionTool] を直接作成できます。次を指定する必要があります。
+場合によっては、Python 関数をツールとして使いたくないことがあります。その場合は、必要に応じて [`FunctionTool`][agents.tool.FunctionTool] を直接作成できます。必要なのは次のとおりです。
 
-- `name`
-- `description`
-- 引数の JSON スキーマである `params_json_schema`
-- [`ToolContext`][agents.tool_context.ToolContext] と引数の JSON 文字列を受け取り、ツールの出力を文字列で返す非同期関数 `on_invoke_tool`
+-   `name`
+-   `description`
+-   `params_json_schema` (引数の JSON スキーマ)
+-   `on_invoke_tool` ( [`ToolContext`][agents.tool_context.ToolContext] と、JSON 文字列としての引数を受け取り、ツール出力 (例: テキスト、構造化されたツール出力オブジェクト、または出力のリスト) を返す async 関数)
 
 ```python
 from typing import Any
@@ -227,16 +343,120 @@ tool = FunctionTool(
 
 ### 引数と docstring の自動解析
 
-前述のとおり、ツール用のスキーマを抽出するために関数シグネチャを自動解析し、ツールおよび個々の引数の説明を抽出するために docstring を解析します。補足事項:
+前述のとおり、ツールのスキーマを抽出するために関数シグネチャを自動解析し、ツールおよび個々の引数の説明を抽出するために docstring を解析します。これに関する注意点:
 
-1. シグネチャ解析は `inspect` モジュールで行います。型アノテーションを使って引数の型を理解し、全体のスキーマを表す Pydantic モデルを動的に構築します。Python の基本型、Pydantic モデル、TypedDict など、ほとんどの型をサポートします。
-2. docstring の解析には `griffe` を使用します。サポートされる docstring 形式は `google`、`sphinx`、`numpy` です。docstring 形式は自動検出を試みますがベストエフォートであり、`function_tool` 呼び出し時に明示的に設定できます。`use_docstring_info` を `False` に設定すると docstring 解析を無効化できます。
+1. シグネチャ解析は `inspect` モジュールで行います。型注釈により引数の型を理解し、全体スキーマを表す Pydantic モデルを動的に構築します。Python のプリミティブ、Pydantic モデル、TypedDict など、ほとんどの型をサポートします。
+2. docstring の解析には `griffe` を使用します。サポートされる docstring 形式は `google`、`sphinx`、`numpy` です。docstring 形式は自動検出を試みますが、これはベストエフォートであり、`function_tool` 呼び出し時に明示的に設定できます。`use_docstring_info` を `False` に設定することで docstring 解析を無効化することもできます。
 
 スキーマ抽出のコードは [`agents.function_schema`][] にあります。
 
-## エージェントをツールとして
+### Pydantic Field による引数の制約と説明
 
-ワークフローによっては、ハンドオフ せずに、中央の エージェント が専門特化した エージェント 群のオーケストレーションを行いたい場合があります。エージェント をツールとしてモデル化することでこれが可能です。
+Pydantic の [`Field`](https://docs.pydantic.dev/latest/concepts/fields/) を使用して、ツール引数に制約 (例: 数値の最小/最大、文字列の長さやパターン) と説明を追加できます。Pydantic と同様に、両方の形式をサポートします。デフォルトベース (`arg: int = Field(..., ge=1)`) と `Annotated` (`arg: Annotated[int, Field(..., ge=1)]`) です。生成される JSON スキーマとバリデーションには、これらの制約が含まれます。
+
+```python
+from typing import Annotated
+from pydantic import Field
+from agents import function_tool
+
+# Default-based form
+@function_tool
+def score_a(score: int = Field(..., ge=0, le=100, description="Score from 0 to 100")) -> str:
+    return f"Score recorded: {score}"
+
+# Annotated form
+@function_tool
+def score_b(score: Annotated[int, Field(..., ge=0, le=100, description="Score from 0 to 100")]) -> str:
+    return f"Score recorded: {score}"
+```
+
+### 関数ツールのタイムアウト
+
+async の関数ツールについては、`@function_tool(timeout=...)` で呼び出しごとのタイムアウトを設定できます。
+
+```python
+import asyncio
+from agents import Agent, Runner, function_tool
+
+
+@function_tool(timeout=2.0)
+async def slow_lookup(query: str) -> str:
+    await asyncio.sleep(10)
+    return f"Result for {query}"
+
+
+agent = Agent(
+    name="Timeout demo",
+    instructions="Use tools when helpful.",
+    tools=[slow_lookup],
+)
+```
+
+タイムアウトに達した場合、既定の挙動は `timeout_behavior="error_as_result"` であり、モデルから見えるタイムアウトメッセージ (例: `Tool 'slow_lookup' timed out after 2 seconds.`) を送信します。
+
+タイムアウト処理を制御できます。
+
+-   `timeout_behavior="error_as_result"` (デフォルト): 復旧できるよう、タイムアウトメッセージをモデルへ返します。
+-   `timeout_behavior="raise_exception"`: [`ToolTimeoutError`][agents.exceptions.ToolTimeoutError] を raise して実行を失敗させます。
+-   `timeout_error_function=...`: `error_as_result` 使用時のタイムアウトメッセージをカスタマイズします。
+
+```python
+import asyncio
+from agents import Agent, Runner, ToolTimeoutError, function_tool
+
+
+@function_tool(timeout=1.5, timeout_behavior="raise_exception")
+async def slow_tool() -> str:
+    await asyncio.sleep(5)
+    return "done"
+
+
+agent = Agent(name="Timeout hard-fail", tools=[slow_tool])
+
+try:
+    await Runner.run(agent, "Run the tool")
+except ToolTimeoutError as e:
+    print(f"{e.tool_name} timed out in {e.timeout_seconds} seconds")
+```
+
+!!! note
+
+    タイムアウト設定は async の `@function_tool` ハンドラーでのみサポートされます。
+
+### 関数ツールでのエラー処理
+
+`@function_tool` で関数ツールを作成する際に、`failure_error_function` を渡せます。これは、ツール呼び出しがクラッシュした場合に、LLM へ返すエラーレスポンスを提供する関数です。
+
+-   デフォルト (何も渡さない場合) では、エラーが発生したことを LLM に伝える `default_tool_error_function` が実行されます。
+-   独自のエラー関数を渡した場合はそれが実行され、そのレスポンスが LLM に送信されます。
+-   明示的に `None` を渡した場合は、ツール呼び出しエラーは再 raise され、ユーザー側で処理できます。これは、モデルが不正な JSON を生成した場合の `ModelBehaviorError` や、コードがクラッシュした場合の `UserError` などになり得ます。
+
+```python
+from agents import function_tool, RunContextWrapper
+from typing import Any
+
+def my_custom_error_function(context: RunContextWrapper[Any], error: Exception) -> str:
+    """A custom function to provide a user-friendly error message."""
+    print(f"A tool call failed with the following error: {error}")
+    return "An internal server error occurred. Please try again later."
+
+@function_tool(failure_error_function=my_custom_error_function)
+def get_user_profile(user_id: str) -> str:
+    """Fetches a user profile from a mock API.
+     This function demonstrates a 'flaky' or failing API call.
+    """
+    if user_id == "user_123":
+        return "User profile for user_123 successfully retrieved."
+    else:
+        raise ValueError(f"Could not retrieve profile for user_id: {user_id}. API returned an error.")
+
+```
+
+`FunctionTool` オブジェクトを手動で作成する場合は、`on_invoke_tool` 関数内でエラーを処理する必要があります。
+
+## Agents as tools
+
+ワークフローによっては、制御を ハンドオフ する代わりに、中央のエージェントが専門エージェントのネットワークをオーケストレーションしたい場合があります。これを、エージェントをツールとしてモデル化することで実現できます。
 
 ```python
 from agents import Agent, Runner
@@ -275,9 +495,9 @@ async def main():
     print(result.final_output)
 ```
 
-### ツール化したエージェントのカスタマイズ
+### ツールエージェントのカスタマイズ
 
-`agent.as_tool` 関数は、エージェント を手軽にツール化するための簡便メソッドです。ただし、すべての設定をサポートしているわけではありません。例えば、`max_turns` は設定できません。高度なユースケースでは、ツール実装内で `Runner.run` を直接使用してください。
+`agent.as_tool` 関数は、エージェントをツールに変換しやすくするための便利メソッドです。`max_turns`、`run_config`、`hooks`、`previous_response_id`、`conversation_id`、`session`、`needs_approval` といった一般的なランタイムオプションをサポートします。また、`parameters`、`input_builder`、`include_input_schema` による構造化入力もサポートします。高度なオーケストレーション (例: 条件付きリトライ、フォールバック動作、複数エージェント呼び出しの連鎖) では、ツール実装内で `Runner.run` を直接使用してください。
 
 ```python
 @function_tool
@@ -296,15 +516,49 @@ async def run_my_agent() -> str:
     return str(result.final_output)
 ```
 
+### ツールエージェントの構造化入力
+
+既定では、`Agent.as_tool()` は単一の文字列入力 (`{"input": "..."}`) を想定しますが、`parameters` (Pydantic モデルまたは dataclass 型) を渡すことで、構造化スキーマを公開できます。
+
+追加オプション:
+
+- `include_input_schema=True` は、生成されるネストされた入力に完全な JSON Schema を含めます。
+- `input_builder=...` は、構造化ツール引数をネストされたエージェント入力に変換する方法を完全にカスタマイズできます。
+- `RunContextWrapper.tool_input` は、ネストされた実行コンテキスト内の、解析済みの構造化ペイロードを含みます。
+
+```python
+from pydantic import BaseModel, Field
+
+
+class TranslationInput(BaseModel):
+    text: str = Field(description="Text to translate.")
+    source: str = Field(description="Source language.")
+    target: str = Field(description="Target language.")
+
+
+translator_tool = translator_agent.as_tool(
+    tool_name="translate_text",
+    tool_description="Translate text between languages.",
+    parameters=TranslationInput,
+    include_input_schema=True,
+)
+```
+
+完全に実行可能な例は `examples/agent_patterns/agents_as_tools_structured.py` を参照してください。
+
+### ツールエージェントの承認ゲート
+
+`Agent.as_tool(..., needs_approval=...)` は `function_tool` と同じ承認フローを使用します。承認が必要な場合、実行は一時停止し、保留中の項目が `result.interruptions` に表示されます。その後、`result.to_state()` を使用し、`state.approve(...)` または `state.reject(...)` を呼び出してから再開します。完全な一時停止/再開パターンについては [Human-in-the-loop ガイド](human_in_the_loop.md) を参照してください。
+
 ### カスタム出力抽出
 
-場合によっては、中央の エージェント に返す前に ツール化したエージェント の出力を加工したいことがあります。例えば次のような場合に有用です。
+特定のケースでは、中央のエージェントへ返す前に、ツールエージェントの出力を変更したい場合があります。これは次のような場合に役立ちます。
 
-- サブエージェントのチャット履歴から特定の情報（例: JSON ペイロード）を抽出する。
-- エージェント の最終回答を変換または再整形する（例: Markdown をプレーンテキストや CSV に変換）。
-- 出力を検証し、応答が欠落または不正な場合にフォールバック値を提供する。
+-   サブエージェントのチャット履歴から特定の情報 (例: JSON ペイロード) を抽出する。
+-   エージェントの最終回答を変換または再フォーマットする (例: Markdown をプレーンテキストや CSV に変換する)。
+-   出力を検証する、またはエージェントの応答が欠落している/不正な場合にフォールバック値を提供する。
 
-これは、`as_tool` メソッドに `custom_output_extractor` 引数を渡すことで実現できます。
+`as_tool` メソッドに `custom_output_extractor` 引数を指定することで実現できます。
 
 ```python
 async def extract_json_payload(run_result: RunResult) -> str:
@@ -323,9 +577,9 @@ json_tool = data_agent.as_tool(
 )
 ```
 
-### ネストしたエージェント実行のストリーミング
+### ネストされたエージェント実行の ストリーミング
 
-ネストした エージェント が発行する ストリーミング イベントを受け取りつつ、ストリーム完了後にその最終出力を返すには、`as_tool` に `on_stream` コールバックを渡します。
+`as_tool` に `on_stream` コールバックを渡すと、ストリームが完了した後に最終出力を返しつつ、ネストされたエージェントが発行する ストリーミング イベントを購読できます。
 
 ```python
 from agents import AgentToolStreamEvent
@@ -333,7 +587,7 @@ from agents import AgentToolStreamEvent
 
 async def handle_stream(event: AgentToolStreamEvent) -> None:
     # Inspect the underlying StreamEvent along with agent metadata.
-    print(f"[stream] {event['agent']['name']} :: {event['event'].type}")
+    print(f"[stream] {event['agent'].name} :: {event['event'].type}")
 
 
 billing_agent_tool = billing_agent.as_tool(
@@ -343,17 +597,17 @@ billing_agent_tool = billing_agent.as_tool(
 )
 ```
 
-想定される動作:
+想定されること:
 
-- イベント種別は `StreamEvent["type"]` を反映します: `raw_response_event`、`run_item_stream_event`、`agent_updated_stream_event`。
-- `on_stream` を提供すると、ネストした エージェント は自動的にストリーミングモードで実行され、最終出力を返す前にストリームを排出します。
-- ハンドラーは同期/非同期いずれでも可。各イベントは到着順に配信されます。
-- ツール呼び出しがモデルのツールコール経由の場合は `tool_call_id` が存在します。直接呼び出しでは `None` の場合があります。
-- 完全な実行可能サンプルは `examples/agent_patterns/agents_as_tools_streaming.py` を参照してください。
+- イベントタイプは `StreamEvent["type"]` を反映します: `raw_response_event`、`run_item_stream_event`、`agent_updated_stream_event`。
+- `on_stream` を提供すると、ネストされたエージェントは自動的に ストリーミング モードで実行され、最終出力を返す前にストリームをドレインします。
+- ハンドラーは同期/非同期のどちらでもよく、各イベントは到着順に配信されます。
+- `tool_call` は、モデルのツール呼び出し経由でツールが呼び出された場合に存在します。直接呼び出しでは `None` のままになることがあります。
+- 完全に実行可能なサンプルは `examples/agent_patterns/agents_as_tools_streaming.py` を参照してください。
 
 ### 条件付きツール有効化
 
-実行時に `is_enabled` パラメーターを使用して、エージェント のツールを条件付きで有効化/無効化できます。これにより、コンテキスト、ユーザー の嗜好、実行時条件に基づいて、LLM に提供するツールを動的に絞り込めます。
+`is_enabled` パラメーターを使用すると、実行時にエージェントツールを条件付きで有効/無効にできます。これにより、コンテキスト、ユーザー設定、またはランタイム条件に基づいて、LLM が利用できるツールを動的にフィルタリングできます。
 
 ```python
 import asyncio
@@ -410,44 +664,65 @@ asyncio.run(main())
 
 `is_enabled` パラメーターは次を受け付けます。
 
-- **真偽値**: `True`（常に有効）または `False`（常に無効）
-- **関数**: `(context, agent)` を受け取り真偽値を返す関数
-- **非同期関数**: 複雑な条件ロジック用の async 関数
+-   **Boolean 値**: `True` (常に有効) または `False` (常に無効)
+-   **呼び出し可能関数**: `(context, agent)` を受け取り boolean を返す関数
+-   **Async 関数**: 複雑な条件ロジックのための async 関数
 
 無効化されたツールは実行時に LLM から完全に隠されるため、次の用途に有用です。
 
-- ユーザー 権限に基づく機能ゲーティング
-- 環境固有（dev と prod）のツール可用性
-- ツール構成の A/B テスト
-- 実行時状態に基づく動的ツールフィルタリング
+-   ユーザー権限に基づく機能ゲーティング
+-   環境別のツール利用可否 (dev vs prod)
+-   異なるツール構成の A/B テスト
+-   ランタイム状態に基づく動的なツールフィルタリング
 
-## 関数ツールでのエラー処理
+## 実験的: Codex ツール
 
-`@function_tool` で関数ツールを作成する際、`failure_error_function` を渡せます。これは、ツール呼び出しがクラッシュした場合に LLM へエラーレスポンスを提供する関数です。
-
-- 既定では（つまり何も渡さない場合）、エラーが発生したことを LLM に知らせる `default_tool_error_function` を実行します。
-- 独自のエラー関数を渡した場合はそれが実行され、そのレスポンスが LLM に送られます。
-- 明示的に `None` を渡した場合、ツール呼び出しエラーは再送出され、呼び出し側で処理する必要があります。モデルが不正な JSON を生成した場合は `ModelBehaviorError`、コードがクラッシュした場合は `UserError` などになり得ます。
+`codex_tool` は Codex CLI をラップし、エージェントがツール呼び出し中にワークスペース範囲のタスク (シェル、ファイル編集、MCP ツール) を実行できるようにします。このサーフェスは実験的であり、変更される可能性があります。
+デフォルトでは、ツール名は `codex` です。カスタム名を設定する場合、それは `codex` であるか、`codex_` で始まる必要があります。
+エージェントが複数の Codex ツールを含む場合、それぞれが一意の名前を使用する必要があります (Codex 以外のツールも含めて)。
 
 ```python
-from agents import function_tool, RunContextWrapper
-from typing import Any
+from agents import Agent
+from agents.extensions.experimental.codex import ThreadOptions, TurnOptions, codex_tool
 
-def my_custom_error_function(context: RunContextWrapper[Any], error: Exception) -> str:
-    """A custom function to provide a user-friendly error message."""
-    print(f"A tool call failed with the following error: {error}")
-    return "An internal server error occurred. Please try again later."
-
-@function_tool(failure_error_function=my_custom_error_function)
-def get_user_profile(user_id: str) -> str:
-    """Fetches a user profile from a mock API.
-     This function demonstrates a 'flaky' or failing API call.
-    """
-    if user_id == "user_123":
-        return "User profile for user_123 successfully retrieved."
-    else:
-        raise ValueError(f"Could not retrieve profile for user_id: {user_id}. API returned an error.")
-
+agent = Agent(
+    name="Codex Agent",
+    instructions="Use the codex tool to inspect the workspace and answer the question.",
+    tools=[
+        codex_tool(
+            sandbox_mode="workspace-write",
+            working_directory="/path/to/repo",
+            default_thread_options=ThreadOptions(
+                model="gpt-5.2-codex",
+                model_reasoning_effort="low",
+                network_access_enabled=True,
+                web_search_mode="disabled",
+                approval_policy="never",
+            ),
+            default_turn_options=TurnOptions(
+                idle_timeout_seconds=60,
+            ),
+            persist_session=True,
+        )
+    ],
+)
 ```
 
-`FunctionTool` オブジェクトを手動で作成する場合は、`on_invoke_tool` 関数内でエラーを処理する必要があります。
+知っておくべきこと:
+
+-   Auth: `CODEX_API_KEY` (推奨) または `OPENAI_API_KEY` を設定するか、`codex_options={"api_key": "..."}` を渡します。
+-   Runtime: `codex_options.base_url` は CLI の base URL をオーバーライドします。
+-   Binary resolution: `codex_options.codex_path_override` (または `CODEX_PATH`) を設定して CLI パスを固定します。設定しない場合、SDK は `PATH` から `codex` を解決し、その後、同梱の vendor バイナリへフォールバックします。
+-   Environment: `codex_options.env` はサブプロセス環境を完全に制御します。これが提供される場合、サブプロセスは `os.environ` を継承しません。
+-   Stream limits: `codex_options.codex_subprocess_stream_limit_bytes` (または `OPENAI_AGENTS_CODEX_SUBPROCESS_STREAM_LIMIT_BYTES`) は stdout/stderr リーダーの上限を制御します。有効範囲は `65536` から `67108864`、デフォルトは `8388608` です。
+-   Inputs: ツール呼び出しには、`inputs` に少なくとも 1 つのアイテムとして `{ "type": "text", "text": ... }` または `{ "type": "local_image", "path": ... }` を含める必要があります。
+-   Thread defaults: `default_thread_options` で `model_reasoning_effort`、`web_search_mode` (旧来の `web_search_enabled` より推奨)、`approval_policy`、`additional_directories` を設定します。
+-   Turn defaults: `default_turn_options` で `idle_timeout_seconds` とキャンセル `signal` を設定します。
+-   Safety: `sandbox_mode` を `working_directory` と組み合わせます。Git リポジトリ外では `skip_git_repo_check=True` を設定します。
+-   Run-context thread persistence: `use_run_context_thread_id=True` は、同じコンテキストを共有する実行にわたり、実行コンテキスト内に `thread_id` を保存して再利用します。これには変更可能な実行コンテキスト (例: `dict` または書き込み可能なオブジェクトフィールド) が必要です。
+-   Run-context key defaults: 保存されるキーのデフォルトは、`name="codex"` の場合は `codex_thread_id`、`name="codex_<suffix>"` の場合は `codex_thread_id_<suffix>` です。オーバーライドするには `run_context_thread_id_key` を設定します。
+-   Thread ID precedence: 呼び出しごとの `thread_id` 入力が優先され、次に (有効化されていれば) run-context の `thread_id`、最後に設定済みの `thread_id` オプションが続きます。
+-   Streaming: `on_stream` は、thread/turn のライフサイクルイベントとアイテムイベント (`reasoning`、`command_execution`、`mcp_tool_call`、`file_change`、`web_search`、`todo_list`、および `error` アイテム更新) を受け取ります。
+-   Outputs: 結果には `response`、`usage`、`thread_id` が含まれます。`usage` は `RunContextWrapper.usage` に追加されます。
+-   Structure: `output_schema` は、型付き出力が必要な場合に構造化された Codex 応答を強制します。
+-   完全に実行可能なサンプルは `examples/tools/codex.py` と `examples/tools/codex_same_thread.py` を参照してください。
