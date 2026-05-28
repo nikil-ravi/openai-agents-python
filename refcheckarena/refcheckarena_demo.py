@@ -1,412 +1,355 @@
+"""RefCheckArena — round-based peer reference evaluation for AI agents.
+
+Three agents collaborate over structured rounds, then rate each other.
+Runs two conditions (structured vs. free-form) across two tasks to support
+the paper's core experiments: main results, baseline comparison,
+cross-task stability, and pairwise asymmetry.
+"""
+
 from __future__ import annotations
 
 import asyncio
+import json
 import statistics
-from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
+from datetime import datetime
 from itertools import permutations
+from pathlib import Path
 from typing import Any, Literal
 
 from pydantic import BaseModel, Field
-
 from agents import Agent, Runner, trace
 
-COLLABORATION_ROUNDS = 3
-RECENT_TRANSCRIPT_TURNS = 6
-RATING_DIMENSIONS = (
-    "collaboration",
-    "handoff_clarity",
-    "reliability",
-    "communication",
-    "initiative",
-    "overall",
-)
 
+# ── Config ────────────────────────────────────────────────────────────────────
+
+ROUNDS = 3
+RECENT_TURNS = 6
+DIMENSIONS = ("collaboration", "handoff_clarity", "reliability", "communication", "initiative", "overall")
+
+MODELS = {
+    "gpt-4.1":         "gpt-4.1",
+    "gpt-4.1-mini":    "gpt-4.1-mini",
+    "claude-sonnet-4": "litellm/anthropic/claude-sonnet-4-20250514",
+    "gemini-2.5-pro":  "litellm/gemini/gemini-2.5-pro-preview-06-05",
+}
+
+
+# ── Data types ────────────────────────────────────────────────────────────────
 
 @dataclass
-class TeamTask:
+class Task:
     title: str
     scenario: str
     constraints: list[str]
     deliverable: str
-    rounds: int = COLLABORATION_ROUNDS
 
 
 @dataclass
-class CollaborationTurn:
-    turn_id: str
-    round_index: int
+class Turn:
+    id: str
+    round: int
     stage: str
     speaker: str
     content: str
 
 
 class ReferenceCheck(BaseModel):
-    collaboration: int = Field(ge=1, le=5)
-    handoff_clarity: int = Field(ge=1, le=5)
-    reliability: int = Field(ge=1, le=5)
-    communication: int = Field(ge=1, le=5)
-    initiative: int = Field(ge=1, le=5)
-    overall: int = Field(ge=1, le=5)
-    confidence: int = Field(ge=1, le=5)
+    collaboration:         int  = Field(ge=1, le=5)
+    handoff_clarity:       int  = Field(ge=1, le=5)
+    reliability:           int  = Field(ge=1, le=5)
+    communication:         int  = Field(ge=1, le=5)
+    initiative:            int  = Field(ge=1, le=5)
+    overall:               int  = Field(ge=1, le=5)
+    confidence:            int  = Field(ge=1, le=5)
     insufficient_evidence: bool
-    evidence: list[str] = Field(min_length=2, max_length=6)
-    rationale: str = Field(min_length=40)
+    evidence:              list[str] = Field(min_length=2, max_length=6)
+    rationale:             str       = Field(min_length=40)
 
 
-def collaboration_stage(
-    round_index: int, total_rounds: int
-) -> Literal["planning", "challenge", "synthesis"]:
-    if round_index == 0:
-        return "planning"
-    if round_index == total_rounds - 1:
-        return "synthesis"
+# ── Prompts ───────────────────────────────────────────────────────────────────
+
+STAGE_GOALS = {
+    "planning":   "Clarify goals, ownership, and dependencies. Propose a concrete plan.",
+    "challenge":  "Critique the plan. Surface at least one risk and propose a mitigation with an owner.",
+    "synthesis":  "Converge on a final deliverable. Resolve disagreements and assign next steps.",
+}
+
+STRUCTURED_CONTRACT = """\
+Collaboration contract:
+- Respond to at least one point from the transcript.
+- Add one new concrete contribution.
+- Include one explicit handoff or owner assignment."""
+
+FREEFORM_CONTRACT = "Collaborate naturally with your teammates to complete the task."
+
+
+def stage(round_index: int) -> Literal["planning", "challenge", "synthesis"]:
+    if round_index == 0:           return "planning"
+    if round_index == ROUNDS - 1: return "synthesis"
     return "challenge"
 
 
-def format_task(task: TeamTask) -> str:
-    constraints = "\n".join(f"- {item}" for item in task.constraints)
-    return (
-        f"Task title: {task.title}\n"
-        f"Scenario: {task.scenario}\n"
-        f"Constraints:\n{constraints}\n"
-        f"Deliverable: {task.deliverable}"
-    )
-
-
-def format_transcript(transcript: list[CollaborationTurn]) -> str:
-    if not transcript:
+def fmt_transcript(turns: list[Turn], *, last_n: int | None = None) -> str:
+    subset = turns[-last_n:] if last_n else turns
+    if not subset:
         return "No transcript yet."
-
-    lines = []
-    for turn in transcript:
-        lines.append(
-            f"{turn.turn_id} | round={turn.round_index + 1} | stage={turn.stage} | "
-            f"{turn.speaker}: {turn.content}"
-        )
-    return "\n".join(lines)
-
-
-def format_recent_transcript(transcript: list[CollaborationTurn], max_turns: int) -> str:
-    return format_transcript(transcript[-max_turns:])
-
-
-def format_agent_turns(transcript: list[CollaborationTurn], agent_name: str) -> str:
-    agent_turns = [turn for turn in transcript if turn.speaker == agent_name]
-    return format_transcript(agent_turns)
-
-
-def build_reference_checker(name: str, evaluator: str, target: str) -> Agent[None]:
-    rubric = (
-        "You are writing a post-collaboration reference check. "
-        "Score only the target collaborator.\n"
-        "Rubric anchors:\n"
-        "- 1 = actively harmful, 2 = weak, 3 = acceptable baseline, 4 = strong, 5 = exceptional.\n"
-        "Be strict and evidence-based: avoid inflated scoring."
+    return "\n".join(
+        f"{t.id} | round={t.round+1} | {t.stage} | {t.speaker}: {t.content}"
+        for t in subset
     )
-    instructions = (
-        f"You are evaluating {target} from the viewpoint of {evaluator}.\n"
-        "Only use evidence from the provided transcript.\n"
-        "You must cite transcript turn IDs in every evidence bullet.\n"
-        "If the transcript does not justify confident ratings, set insufficient_evidence=true and "
-        "lower confidence.\n"
-        "Do not rate personality. Rate collaborative behavior quality."
-        f"\n\n{rubric}"
-    )
-    return Agent(name=name, instructions=instructions, output_type=ReferenceCheck)
 
 
-def build_turn_prompt(
-    task: TeamTask,
-    transcript: list[CollaborationTurn],
-    current_stage: Literal["planning", "challenge", "synthesis"],
-    round_index: int,
-) -> str:
-    stage_instruction = {
-        "planning": (
-            "Clarify goals, decomposition, and ownership. Propose a concrete plan and identify "
-            "at least one dependency."
-        ),
-        "challenge": (
-            "Critique existing plan quality. Surface at least one risk or contradiction and "
-            "propose a mitigation with explicit owner."
-        ),
-        "synthesis": (
-            "Converge toward a coherent final deliverable. Resolve disagreements and leave clear "
-            "next steps and accountability."
-        ),
-    }[current_stage]
-    transcript_text = format_recent_transcript(transcript, RECENT_TRANSCRIPT_TURNS)
+def fmt_task(task: Task) -> str:
+    constraints = "\n".join(f"- {c}" for c in task.constraints)
+    return f"Task: {task.title}\nScenario: {task.scenario}\nConstraints:\n{constraints}\nDeliverable: {task.deliverable}"
+
+
+def turn_prompt(task: Task, transcript: list[Turn], round_index: int, structured: bool) -> str:
+    s = stage(round_index)
     return (
-        f"{format_task(task)}\n\n"
-        f"Round {round_index + 1}/{task.rounds} | Stage: {current_stage}\n"
-        f"Stage objective: {stage_instruction}\n\n"
-        "Collaboration contract:\n"
-        "- Respond directly to at least one point from the transcript.\n"
-        "- Add one new concrete contribution (plan detail, implementation step, or risk control).\n"
-        "- Include one explicit handoff or owner assignment.\n"
-        "- Keep response concise but specific.\n\n"
-        "Recent transcript:\n"
-        f"{transcript_text}"
+        f"{fmt_task(task)}\n\n"
+        f"Round {round_index+1}/{ROUNDS} | Stage: {s}\n"
+        f"Goal: {STAGE_GOALS[s]}\n\n"
+        f"{STRUCTURED_CONTRACT if structured else FREEFORM_CONTRACT}\n\n"
+        f"Recent transcript:\n{fmt_transcript(transcript, last_n=RECENT_TURNS)}"
     )
 
 
-def mean(values: list[float]) -> float:
-    if not values:
-        return 0.0
-    return sum(values) / len(values)
-
-
-def average_by_dimension(checks: list[ReferenceCheck]) -> dict[str, float]:
-    if not checks:
-        return {dimension: 0.0 for dimension in RATING_DIMENSIONS}
-
-    averages: dict[str, float] = {}
-    for dimension in RATING_DIMENSIONS:
-        averages[dimension] = mean([float(getattr(check, dimension)) for check in checks])
-    return averages
-
-
-def aggregate_checks(checks: Iterable[ReferenceCheck]) -> dict[str, float]:
-    return average_by_dimension(list(checks))
-
-
-def aggregate_peer_checks(peer_checks: dict[str, dict[str, ReferenceCheck]]) -> dict[str, Any]:
-    records: list[tuple[str, str, ReferenceCheck]] = []
-    for evaluator, ratings in peer_checks.items():
-        for target, check in ratings.items():
-            records.append((evaluator, target, check))
-
-    checks = [record[2] for record in records]
-    global_averages = average_by_dimension(checks)
-
-    peers = set(peer_checks.keys())
-    for ratings in peer_checks.values():
-        peers.update(ratings.keys())
-
-    per_agent_received: dict[str, dict[str, float]] = {}
-    per_agent_given: dict[str, dict[str, float]] = {}
-    agreement_by_target: dict[str, dict[str, float]] = {}
-
-    for peer in sorted(peers):
-        received_checks = [check for _, target, check in records if target == peer]
-        given_checks = [check for evaluator, _, check in records if evaluator == peer]
-        per_agent_received[peer] = average_by_dimension(received_checks)
-        per_agent_given[peer] = average_by_dimension(given_checks)
-
-        overall_scores = [float(check.overall) for _, target, check in records if target == peer]
-        if overall_scores:
-            spread = max(overall_scores) - min(overall_scores)
-            stddev = statistics.pstdev(overall_scores) if len(overall_scores) > 1 else 0.0
-            agreement_by_target[peer] = {"overall_spread": spread, "overall_stddev": stddev}
-        else:
-            agreement_by_target[peer] = {"overall_spread": 0.0, "overall_stddev": 0.0}
-
-    evidence_counts = [len(check.evidence) for check in checks]
-    insufficient_evidence_count = sum(1 for check in checks if check.insufficient_evidence)
-    evidence_quality = {
-        "average_evidence_items_per_check": mean([float(count) for count in evidence_counts]),
-        "insufficient_evidence_rate": (
-            insufficient_evidence_count / len(checks) if checks else 0.0
-        ),
-        "average_confidence": mean([float(check.confidence) for check in checks]),
-    }
-
-    return {
-        "num_peer_checks": len(records),
-        "global_averages": global_averages,
-        "per_agent_received": per_agent_received,
-        "per_agent_given": per_agent_given,
-        "agreement_by_target": agreement_by_target,
-        "evidence_quality": evidence_quality,
-    }
-
-
-def build_team() -> list[Agent[None]]:
-    collaboration_contract = (
-        "You are part of a three-person project team and must collaborate over multiple rounds. "
-        "Do not pretend the work is finished early. Build on prior teammate content, keep handoffs "
-        "explicit, and improve clarity each round."
+def checker_prompt(task: Task, transcript: list[Turn], evaluator: str, target: str) -> str:
+    target_turns = fmt_transcript([t for t in transcript if t.speaker == target])
+    return (
+        f"{fmt_task(task)}\n\n"
+        f"Full transcript:\n{fmt_transcript(transcript)}\n\n"
+        f"{target}'s turns:\n{target_turns}\n\n"
+        f"You are {evaluator}. Rate {target}'s collaborative performance."
     )
+
+
+# ── Agents ────────────────────────────────────────────────────────────────────
+
+ROLES = {
+    "Planner":      "You handle decomposition, sequencing, and ownership clarity.",
+    "Implementer":  "You translate strategy into concrete actions, validation steps, and fallbacks.",
+    "RiskReviewer": "You stress-test assumptions, surface failure modes, and demand measurable controls.",
+}
+
+BASE = (
+    "You are part of a three-person project team collaborating over multiple rounds. "
+    "Build on prior content, keep handoffs explicit, and do not declare the work finished early."
+)
+
+CHECKER_SYSTEM = (
+    "Write a post-collaboration reference check. Use only evidence from the transcript; "
+    "cite turn IDs in every evidence bullet. Rate collaborative behavior, not output quality.\n"
+    "Rubric: 1 = harmful · 2 = weak · 3 = acceptable · 4 = strong · 5 = exceptional. Be strict."
+)
+
+
+def build_team(assignments: dict[str, str]) -> list[Agent]:
     return [
         Agent(
-            name="Planner",
-            instructions=(
-                f"{collaboration_contract} "
-                "You are responsible for decomposition, sequencing, and ownership clarity. "
-                "Prioritize milestones, dependencies, and risk-adjusted ordering."
-            ),
-        ),
-        Agent(
-            name="Implementer",
-            instructions=(
-                f"{collaboration_contract} "
-                "You are responsible for execution realism. Translate strategy into concrete "
-                "actions, validation steps, and fallback paths."
-            ),
-        ),
-        Agent(
-            name="RiskReviewer",
-            instructions=(
-                f"{collaboration_contract} "
-                "You are responsible for challenge quality. Stress test assumptions, identify "
-                "failure modes, and demand measurable controls."
-            ),
-        ),
+            name=role,
+            instructions=f"{BASE} {instructions}",
+            model=MODELS.get(assignments.get(role, "gpt-4.1"), assignments.get(role, "gpt-4.1")),
+        )
+        for role, instructions in ROLES.items()
     ]
 
 
-def build_tasks() -> list[TeamTask]:
-    return [
-        TeamTask(
-            title="High-stakes release triage and recovery plan",
-            scenario=(
-                "A major release is scheduled in 48 hours. CI intermittently fails, one owner is "
-                "out sick, and customer support has a backlog of severity-2 bugs."
-            ),
-            constraints=[
-                "No additional headcount is available.",
-                "The team must preserve the release date unless risk is clearly unacceptable.",
-                "All commitments must include an owner and verification signal.",
-                "The plan must include a rollback and communication strategy.",
-            ],
-            deliverable=(
-                "A coordinated release execution plan with explicit ownership, risk controls, "
-                "and handoff sequence."
-            ),
-        ),
-        TeamTask(
-            title="Cross-functional incident response simulation",
-            scenario=(
-                "Production latency doubled after a recent deployment. Product leadership wants "
-                "hourly updates, and there is pressure to avoid customer-visible downtime."
-            ),
-            constraints=[
-                "Evidence gathering cannot block mitigation actions.",
-                "At least two plausible root-cause hypotheses must be tracked in parallel.",
-                "Communication to stakeholders must separate confirmed facts from assumptions.",
-                "Final plan must include post-incident hardening work.",
-            ],
-            deliverable=(
-                "A staged incident response plan covering immediate mitigation, diagnosis, "
-                "stakeholder communication, and follow-up hardening."
-            ),
-        ),
-    ]
+def build_checker(evaluator: str, target: str, model: str) -> Agent:
+    return Agent(
+        name=f"{evaluator}→{target}",
+        instructions=f"You are evaluating {target} from the viewpoint of {evaluator}.\n\n{CHECKER_SYSTEM}",
+        model=MODELS.get(model, model),
+        output_type=ReferenceCheck,
+    )
 
 
-async def run_team_task(task: TeamTask, team: list[Agent[None]]) -> dict[str, Any]:
-    transcript: list[CollaborationTurn] = []
-    latest_outputs: dict[str, str] = {}
+# ── Execution ─────────────────────────────────────────────────────────────────
 
-    for round_index in range(task.rounds):
-        stage = collaboration_stage(round_index, task.rounds)
+async def run_task(task: Task, team: list[Agent], structured: bool) -> tuple[list[Turn], dict[str, str]]:
+    transcript: list[Turn] = []
+    outputs: dict[str, str] = {}
+    for round_index in range(ROUNDS):
         for agent in team:
-            prompt = build_turn_prompt(task, transcript, stage, round_index)
+            prompt = turn_prompt(task, transcript, round_index, structured)
             result = await Runner.run(agent, prompt)
             output = str(result.final_output).strip()
-            turn_id = f"T{len(transcript) + 1:02d}"
-            transcript.append(
-                CollaborationTurn(
-                    turn_id=turn_id,
-                    round_index=round_index,
-                    stage=stage,
-                    speaker=agent.name,
-                    content=output,
-                )
-            )
-            latest_outputs[agent.name] = output
-
-    return {
-        "task": task,
-        "transcript": transcript,
-        "team_outputs": latest_outputs,
-    }
+            transcript.append(Turn(
+                id=f"T{len(transcript)+1:02d}", round=round_index,
+                stage=stage(round_index), speaker=agent.name, content=output,
+            ))
+            outputs[agent.name] = output
+    return transcript, outputs
 
 
-async def collect_peer_checks(
-    task: TeamTask,
-    transcript: list[CollaborationTurn],
-    team_outputs: dict[str, str],
+async def collect_checks(
+    task: Task, transcript: list[Turn], agents: list[str], checker_model: str
 ) -> dict[str, dict[str, ReferenceCheck]]:
-    checks: dict[str, dict[str, ReferenceCheck]] = {}
-    transcript_text = format_transcript(transcript)
-    for evaluator, target in permutations(team_outputs.keys(), 2):
-        checker = build_reference_checker(
-            name=f"{evaluator}_rates_{target}",
-            evaluator=evaluator,
-            target=target,
+    async def check(e: str, t: str) -> tuple[str, str, ReferenceCheck]:
+        result = await Runner.run(
+            build_checker(e, t, checker_model),
+            checker_prompt(task, transcript, e, t),
         )
-        context = (
-            f"{format_task(task)}\n\n"
-            f"Full collaboration transcript:\n{transcript_text}\n\n"
-            "Your own contributions "
-            f"({evaluator}):\n{format_agent_turns(transcript, evaluator)}\n\n"
-            "Target contributions "
-            f"({target}):\n{format_agent_turns(transcript, target)}\n\n"
-            "Score the target's collaborative performance."
-        )
-        result = await Runner.run(checker, context)
-        checks.setdefault(evaluator, {})[target] = result.final_output
+        return e, t, result.final_output
 
+    results = await asyncio.gather(*[check(e, t) for e, t in permutations(agents, 2)])
+    checks: dict[str, dict[str, ReferenceCheck]] = {}
+    for e, t, c in results:
+        checks.setdefault(e, {})[t] = c
     return checks
 
 
-def print_aggregates(aggregates: dict[str, Any]) -> None:
-    print("\nGlobal averages:")
-    print(aggregates["global_averages"])
-    print("\nPer-agent received scores:")
-    for agent_name, summary in aggregates["per_agent_received"].items():
-        print(f"{agent_name}: {summary}")
-    print("\nPer-agent given scores:")
-    for agent_name, summary in aggregates["per_agent_given"].items():
-        print(f"{agent_name}: {summary}")
-    print("\nRater agreement by target:")
-    for agent_name, summary in aggregates["agreement_by_target"].items():
-        print(f"{agent_name}: {summary}")
-    print("\nEvidence quality:")
-    print(aggregates["evidence_quality"])
+# ── Aggregation ───────────────────────────────────────────────────────────────
+
+def mean(xs: list[float]) -> float:
+    return sum(xs) / len(xs) if xs else 0.0
+
+
+def dim_scores(checks: list[ReferenceCheck]) -> dict[str, float]:
+    return {d: mean([float(getattr(c, d)) for c in checks]) for d in DIMENSIONS}
+
+
+def aggregate(peer_checks: dict[str, dict[str, ReferenceCheck]]) -> dict[str, Any]:
+    records = [(e, t, c) for e, ratings in peer_checks.items() for t, c in ratings.items()]
+    agents  = sorted({r[0] for r in records} | {r[1] for r in records})
+
+    received  = {a: dim_scores([c for _, t, c in records if t == a]) for a in agents}
+    overall   = {a: [float(c.overall) for _, t, c in records if t == a] for a in agents}
+    agreement = {
+        a: {"std": statistics.pstdev(s) if len(s) > 1 else 0.0, "spread": max(s) - min(s)}
+        for a, s in overall.items() if s
+    }
+    asymmetry = {
+        f"{a}→{b}": peer_checks[a][b].overall - peer_checks[b][a].overall
+        for a, b in permutations(agents, 2)
+        if b in peer_checks.get(a, {}) and a in peer_checks.get(b, {})
+    }
+    all_checks = [c for *_, c in records]
+    evidence = {
+        "avg_items":         mean([float(len(c.evidence)) for c in all_checks]),
+        "insufficient_rate": mean([float(c.insufficient_evidence) for c in all_checks]),
+        "avg_confidence":    mean([float(c.confidence) for c in all_checks]),
+    }
+    return {"received": received, "agreement": agreement, "asymmetry": asymmetry, "evidence": evidence}
+
+
+def stability(results: list[dict]) -> dict[str, dict[str, float]]:
+    """Cross-task score variance per agent — lower means more stable signal."""
+    scores: dict[str, dict[str, list[float]]] = {}
+    for r in results:
+        for agent, s in r["agg"]["received"].items():
+            scores.setdefault(agent, {d: [] for d in DIMENSIONS})
+            for d in DIMENSIONS:
+                scores[agent][d].append(s[d])
+    return {
+        a: {d: statistics.pstdev(v) if len(v) > 1 else 0.0 for d, v in dims.items()}
+        for a, dims in scores.items()
+    }
+
+
+# ── Output ────────────────────────────────────────────────────────────────────
+
+def print_results(results: list[dict], label: str) -> None:
+    print(f"\n{'─'*60}\n{label}\n{'─'*60}")
+    for r in results:
+        print(f"\n  {r['task'].title}")
+        print(f"  {'Agent':<16}" + "".join(f"{d:>10}" for d in DIMENSIONS))
+        for agent, scores in sorted(r["agg"]["received"].items()):
+            print(f"  {agent:<16}" + "".join(f"{scores[d]:>10.2f}" for d in DIMENSIONS))
+        print("  Asymmetry: " + "  ".join(
+            f"{p}: {'+' if v >= 0 else ''}{v:.1f}" for p, v in r["agg"]["asymmetry"].items()
+        ))
+        eq = r["agg"]["evidence"]
+        print(f"  Evidence:  items={eq['avg_items']:.1f}  insufficient={eq['insufficient_rate']:.0%}  confidence={eq['avg_confidence']:.2f}")
+
+
+def print_stability(stab: dict) -> None:
+    print(f"\n{'─'*60}\nCross-task stability (pstdev — lower is better)\n{'─'*60}")
+    print(f"  {'Agent':<16}" + "".join(f"{d:>10}" for d in DIMENSIONS))
+    for agent, dims in sorted(stab.items()):
+        print(f"  {agent:<16}" + "".join(f"{dims[d]:>10.2f}" for d in DIMENSIONS))
+
+
+def print_comparison(structured: list[dict], baseline: list[dict]) -> None:
+    print(f"\n{'─'*60}\nStructured vs. free-form baseline\n{'─'*60}")
+    for label, results in [("structured", structured), ("baseline", baseline)]:
+        avg_items = mean([r["agg"]["evidence"]["avg_items"] for r in results])
+        avg_insuf = mean([r["agg"]["evidence"]["insufficient_rate"] for r in results])
+        print(f"  [{label}]  avg evidence items={avg_items:.1f}  insufficient={avg_insuf:.0%}")
+
+
+def save(structured: list[dict], baseline: list[dict], stab: dict) -> None:
+    def serialise(results: list[dict]) -> list[dict]:
+        return [{
+            "task":       {"title": r["task"].title, "scenario": r["task"].scenario},
+            "transcript": [asdict(t) for t in r["transcript"]],
+            "checks":     {e: {t: c.model_dump() for t, c in rats.items()} for e, rats in r["checks"].items()},
+            "agg":        r["agg"],
+        } for r in results]
+
+    Path("results").mkdir(exist_ok=True)
+    filename = f"results/refcheck_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    with open(filename, "w") as f:
+        json.dump({"structured": serialise(structured), "baseline": serialise(baseline), "stability": stab}, f, indent=2, default=str)
+    print(f"\nSaved → {filename}")
+
+
+# ── Tasks ─────────────────────────────────────────────────────────────────────
+
+TASKS = [
+    Task(
+        title="High-stakes release triage",
+        scenario="A major release is 48 hours away. CI intermittently fails, one owner is out sick, and there is a backlog of severity-2 bugs.",
+        constraints=[
+            "No additional headcount available.",
+            "Preserve the release date unless risk is clearly unacceptable.",
+            "All commitments need an owner and a verification signal.",
+            "Must include a rollback and communication strategy.",
+        ],
+        deliverable="A coordinated release plan with explicit ownership, risk controls, and handoff sequence.",
+    ),
+    Task(
+        title="Incident response simulation",
+        scenario="Production latency doubled after a deployment. Leadership wants hourly updates and there is pressure to avoid customer-visible downtime.",
+        constraints=[
+            "Evidence gathering cannot block mitigation.",
+            "Track at least two root-cause hypotheses in parallel.",
+            "Stakeholder updates must separate facts from assumptions.",
+            "Plan must include post-incident hardening.",
+        ],
+        deliverable="A staged incident response plan: mitigation, diagnosis, communication, and hardening.",
+    ),
+]
+
+
+# ── Main ──────────────────────────────────────────────────────────────────────
+
+async def run_condition(tasks: list[Task], assignments: dict[str, str], structured: bool, checker: str) -> list[dict]:
+    team = build_team(assignments)
+    results = []
+    for task in tasks:
+        transcript, outputs = await run_task(task, team, structured)
+        checks = await collect_checks(task, transcript, list(outputs.keys()), checker)
+        results.append({"task": task, "transcript": transcript, "checks": checks, "agg": aggregate(checks)})
+    return results
 
 
 async def main() -> None:
-    tasks = build_tasks()
-    team = build_team()
-    results: list[dict[str, Any]] = []
+    assignments = {"Planner": "gpt-4.1", "Implementer": "gpt-4.1", "RiskReviewer": "gpt-4.1"}
+    checker     = "gpt-4.1-mini"
 
-    with trace("RefCheckArena demo run"):
-        for task in tasks:
-            task_result = await run_team_task(task, team)
-            checks = await collect_peer_checks(
-                task,
-                task_result["transcript"],
-                task_result["team_outputs"],
-            )
-            task_result["peer_checks"] = checks
-            task_result["aggregates"] = aggregate_peer_checks(checks)
-            results.append(task_result)
+    with trace("RefCheckArena"):
+        structured = await run_condition(TASKS, assignments, structured=True,  checker=checker)
+        baseline   = await run_condition(TASKS, assignments, structured=False, checker=checker)
 
-    for result in results:
-        print("\n=== Task ===")
-        print(result["task"].title)
-        print("\nCollaboration transcript:\n")
-        print(format_transcript(result["transcript"]))
-        print("\nLatest team outputs:\n")
-        for name, output in result["team_outputs"].items():
-            print(f"[{name}] {output}")
-        print("\nPeer checks:\n")
-        for rater, ratings in result["peer_checks"].items():
-            for subject, check in ratings.items():
-                print(f"{rater} -> {subject}: {check}")
-        print_aggregates(result["aggregates"])
-
-    all_checks = [
-        check
-        for result in results
-        for ratings in result["peer_checks"].values()
-        for check in ratings.values()
-    ]
-    print("\n=== Aggregate ===")
-    print(aggregate_checks(all_checks))
+    stab = stability(structured)
+    print_results(structured, "Structured condition")
+    print_results(baseline,   "Free-form baseline")
+    print_stability(stab)
+    print_comparison(structured, baseline)
+    save(structured, baseline, stab)
 
 
 if __name__ == "__main__":
