@@ -1,0 +1,810 @@
+{
+  "created_at": "2026-06-04T16:09:02.167101",
+  "results": [
+    {
+      "task": {
+        "title": "AI support platform migration",
+        "scenario": "A B2B SaaS company must decide whether to migrate 40 percent of its support workflow to an AI triage platform before the holiday traffic spike.",
+        "constraints": [
+          "The plan must preserve enterprise SLA commitments.",
+          "The CFO wants a payback argument and downside case.",
+          "Engineering can spare only two developers for six weeks.",
+          "Support leadership needs a customer communication plan."
+        ],
+        "source_packet": [
+          "Ticket volume is 62,000 per month, with a projected 35 percent holiday spike.",
+          "Current median first response time is 11 minutes; SLA breach threshold is 30 minutes.",
+          "The vendor pilot resolved 27 percent of tier-1 tickets without human escalation.",
+          "False routing during the pilot rose from 3.1 percent to 5.4 percent.",
+          "Enterprise customers represent 38 percent of ticket volume and 71 percent of ARR.",
+          "Security review found no critical blockers, but audit logging needs extra work.",
+          "The support team has two enablement slots before the holiday freeze."
+        ],
+        "deliverable": "A go/no-go recommendation with staged rollout, financial case, engineering plan, risk controls, and customer-facing communication guidance.",
+        "success_criteria": [
+          "Every recommendation has an owner.",
+          "The plan distinguishes facts, estimates, and assumptions.",
+          "At least two risks have mitigations and rollback triggers.",
+          "Final prose is coherent enough for executives."
+        ]
+      },
+      "condition": "baseline",
+      "transcript": [
+        {
+          "id": "T001",
+          "index": 1,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "Orchestrator",
+          "action": "baseline_turn",
+          "content": "Orchestrator contributes to the ungated kickoff discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Orchestrator will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T002",
+          "index": 2,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "Researcher",
+          "action": "baseline_turn",
+          "content": "Researcher contributes to the ungated kickoff discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Researcher will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T003",
+          "index": 3,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "FinancialAnalyst",
+          "action": "baseline_turn",
+          "content": "FinancialAnalyst contributes to the ungated kickoff discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: FinancialAnalyst will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T004",
+          "index": 4,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "TechLead",
+          "action": "baseline_turn",
+          "content": "TechLead contributes to the ungated kickoff discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: TechLead will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T005",
+          "index": 5,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "ContentWriter",
+          "action": "baseline_turn",
+          "content": "ContentWriter contributes to the ungated kickoff discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: ContentWriter will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T006",
+          "index": 6,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "Reviewer",
+          "action": "baseline_turn",
+          "content": "Reviewer contributes to the ungated kickoff discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Reviewer will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T007",
+          "index": 7,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "Critic",
+          "action": "baseline_turn",
+          "content": "Critic contributes to the ungated kickoff discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Critic will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T008",
+          "index": 8,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Orchestrator",
+          "action": "baseline_turn",
+          "content": "Orchestrator contributes to the ungated research discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Orchestrator will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T009",
+          "index": 9,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Researcher",
+          "action": "baseline_turn",
+          "content": "Researcher contributes to the ungated research discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Researcher will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T010",
+          "index": 10,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "FinancialAnalyst",
+          "action": "baseline_turn",
+          "content": "FinancialAnalyst contributes to the ungated research discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: FinancialAnalyst will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T011",
+          "index": 11,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "TechLead",
+          "action": "baseline_turn",
+          "content": "TechLead contributes to the ungated research discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: TechLead will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T012",
+          "index": 12,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "ContentWriter",
+          "action": "baseline_turn",
+          "content": "ContentWriter contributes to the ungated research discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: ContentWriter will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T013",
+          "index": 13,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Reviewer",
+          "action": "baseline_turn",
+          "content": "Reviewer contributes to the ungated research discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Reviewer will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T014",
+          "index": 14,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Critic",
+          "action": "baseline_turn",
+          "content": "Critic contributes to the ungated research discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Critic will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T015",
+          "index": 15,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Orchestrator",
+          "action": "baseline_turn",
+          "content": "Orchestrator contributes to the ungated analysis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Orchestrator will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T016",
+          "index": 16,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Researcher",
+          "action": "baseline_turn",
+          "content": "Researcher contributes to the ungated analysis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Researcher will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T017",
+          "index": 17,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "FinancialAnalyst",
+          "action": "baseline_turn",
+          "content": "FinancialAnalyst contributes to the ungated analysis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: FinancialAnalyst will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T018",
+          "index": 18,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "TechLead",
+          "action": "baseline_turn",
+          "content": "TechLead contributes to the ungated analysis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: TechLead will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T019",
+          "index": 19,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "ContentWriter",
+          "action": "baseline_turn",
+          "content": "ContentWriter contributes to the ungated analysis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: ContentWriter will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T020",
+          "index": 20,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Reviewer",
+          "action": "baseline_turn",
+          "content": "Reviewer contributes to the ungated analysis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Reviewer will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T021",
+          "index": 21,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Critic",
+          "action": "baseline_turn",
+          "content": "Critic contributes to the ungated analysis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Critic will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T022",
+          "index": 22,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Orchestrator",
+          "action": "baseline_turn",
+          "content": "Orchestrator contributes to the ungated implementation discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Orchestrator will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T023",
+          "index": 23,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Researcher",
+          "action": "baseline_turn",
+          "content": "Researcher contributes to the ungated implementation discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Researcher will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T024",
+          "index": 24,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "FinancialAnalyst",
+          "action": "baseline_turn",
+          "content": "FinancialAnalyst contributes to the ungated implementation discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: FinancialAnalyst will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T025",
+          "index": 25,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "TechLead",
+          "action": "baseline_turn",
+          "content": "TechLead contributes to the ungated implementation discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: TechLead will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T026",
+          "index": 26,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "ContentWriter",
+          "action": "baseline_turn",
+          "content": "ContentWriter contributes to the ungated implementation discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: ContentWriter will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T027",
+          "index": 27,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Reviewer",
+          "action": "baseline_turn",
+          "content": "Reviewer contributes to the ungated implementation discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Reviewer will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T028",
+          "index": 28,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Critic",
+          "action": "baseline_turn",
+          "content": "Critic contributes to the ungated implementation discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Critic will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T029",
+          "index": 29,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Orchestrator",
+          "action": "baseline_turn",
+          "content": "Orchestrator contributes to the ungated synthesis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Orchestrator will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T030",
+          "index": 30,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Researcher",
+          "action": "baseline_turn",
+          "content": "Researcher contributes to the ungated synthesis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Researcher will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T031",
+          "index": 31,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "FinancialAnalyst",
+          "action": "baseline_turn",
+          "content": "FinancialAnalyst contributes to the ungated synthesis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: FinancialAnalyst will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T032",
+          "index": 32,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "TechLead",
+          "action": "baseline_turn",
+          "content": "TechLead contributes to the ungated synthesis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: TechLead will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T033",
+          "index": 33,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "ContentWriter",
+          "action": "baseline_turn",
+          "content": "ContentWriter contributes to the ungated synthesis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: ContentWriter will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T034",
+          "index": 34,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Reviewer",
+          "action": "baseline_turn",
+          "content": "Reviewer contributes to the ungated synthesis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Reviewer will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T035",
+          "index": 35,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Critic",
+          "action": "baseline_turn",
+          "content": "Critic contributes to the ungated synthesis discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Critic will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T036",
+          "index": 36,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "Orchestrator",
+          "action": "baseline_turn",
+          "content": "Orchestrator contributes to the ungated finalization discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Orchestrator will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T037",
+          "index": 37,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "Researcher",
+          "action": "baseline_turn",
+          "content": "Researcher contributes to the ungated finalization discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Researcher will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T038",
+          "index": 38,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "FinancialAnalyst",
+          "action": "baseline_turn",
+          "content": "FinancialAnalyst contributes to the ungated finalization discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: FinancialAnalyst will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T039",
+          "index": 39,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "TechLead",
+          "action": "baseline_turn",
+          "content": "TechLead contributes to the ungated finalization discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: TechLead will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T040",
+          "index": 40,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "ContentWriter",
+          "action": "baseline_turn",
+          "content": "ContentWriter contributes to the ungated finalization discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: ContentWriter will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T041",
+          "index": 41,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "Reviewer",
+          "action": "baseline_turn",
+          "content": "Reviewer contributes to the ungated finalization discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Reviewer will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T042",
+          "index": 42,
+          "condition": "baseline",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "Critic",
+          "action": "baseline_turn",
+          "content": "Critic contributes to the ungated finalization discussion, references prior comments, and makes a concrete but non-binding proposal.\nCommitment: Critic will keep the next step moving.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        }
+      ],
+      "artifacts": [],
+      "reviews": [],
+      "handoffs": [],
+      "health": {
+        "turn_count": 42,
+        "artifact_count": 0,
+        "approved_artifact_count": 0,
+        "review_count": 0,
+        "critic_rejection_count": 0,
+        "max_revision_depth": 0,
+        "handoff_count": 0,
+        "open_handoff_count": 0,
+        "handoff_completion_rate": 1.0,
+        "contributors": [
+          "ContentWriter",
+          "Critic",
+          "FinancialAnalyst",
+          "Orchestrator",
+          "Researcher",
+          "Reviewer",
+          "TechLead"
+        ],
+        "all_roles_contributed": true
+      },
+      "checks": {
+        "Orchestrator": {
+          "Researcher": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows Researcher participating in the collaboration.",
+              "T002 gives additional context for Researcher's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate Researcher's collaboration, handoff clarity, communication, and follow-through."
+          },
+          "FinancialAnalyst": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows FinancialAnalyst participating in the collaboration.",
+              "T002 gives additional context for FinancialAnalyst's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate FinancialAnalyst's collaboration, handoff clarity, communication, and follow-through."
+          },
+          "TechLead": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows TechLead participating in the collaboration.",
+              "T002 gives additional context for TechLead's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate TechLead's collaboration, handoff clarity, communication, and follow-through."
+          },
+          "ContentWriter": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows ContentWriter participating in the collaboration.",
+              "T002 gives additional context for ContentWriter's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate ContentWriter's collaboration, handoff clarity, communication, and follow-through."
+          }
+        }
+      },
+      "aggregate": {
+        "received": {
+          "ContentWriter": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          },
+          "Critic": {
+            "collaboration": null,
+            "handoff_clarity": null,
+            "reliability": null,
+            "communication": null,
+            "initiative": null,
+            "overall": null
+          },
+          "FinancialAnalyst": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          },
+          "Orchestrator": {
+            "collaboration": null,
+            "handoff_clarity": null,
+            "reliability": null,
+            "communication": null,
+            "initiative": null,
+            "overall": null
+          },
+          "Researcher": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          },
+          "Reviewer": {
+            "collaboration": null,
+            "handoff_clarity": null,
+            "reliability": null,
+            "communication": null,
+            "initiative": null,
+            "overall": null
+          },
+          "TechLead": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          }
+        },
+        "agreement": {
+          "ContentWriter": {
+            "std": 0.0,
+            "spread": 0.0
+          },
+          "Critic": {
+            "std": 0.0,
+            "spread": null
+          },
+          "FinancialAnalyst": {
+            "std": 0.0,
+            "spread": 0.0
+          },
+          "Orchestrator": {
+            "std": 0.0,
+            "spread": null
+          },
+          "Researcher": {
+            "std": 0.0,
+            "spread": 0.0
+          },
+          "Reviewer": {
+            "std": 0.0,
+            "spread": null
+          },
+          "TechLead": {
+            "std": 0.0,
+            "spread": 0.0
+          }
+        },
+        "asymmetry": {},
+        "evidence": {
+          "checks": 4,
+          "avg_items": 2.0,
+          "insufficient_rate": 0.0,
+          "avg_confidence": 4.0,
+          "citation_rate": 1.0
+        }
+      }
+    }
+  ]
+}

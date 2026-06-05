@@ -1,0 +1,1589 @@
+{
+  "created_at": "2026-06-04T16:42:17.663934",
+  "results": [
+    {
+      "task": {
+        "title": "AI support platform migration",
+        "scenario": "A B2B SaaS company must decide whether to migrate 40 percent of its support workflow to an AI triage platform before the holiday traffic spike.",
+        "constraints": [
+          "The plan must preserve enterprise SLA commitments.",
+          "The CFO wants a payback argument and downside case.",
+          "Engineering can spare only two developers for six weeks.",
+          "Support leadership needs a customer communication plan.",
+          "Compliance needs an auditable escalation path for every automated decision.",
+          "Customer Success wants different messaging for enterprise and self-serve cohorts."
+        ],
+        "source_packet": [
+          "Ticket volume is 62,000 per month, with a projected 35 percent holiday spike.",
+          "Current median first response time is 11 minutes; SLA breach threshold is 30 minutes.",
+          "The vendor pilot resolved 27 percent of tier-1 tickets without human escalation.",
+          "False routing during the pilot rose from 3.1 percent to 5.4 percent.",
+          "Enterprise customers represent 38 percent of ticket volume and 71 percent of ARR.",
+          "Security review found no critical blockers, but audit logging needs extra work.",
+          "The support team has two enablement slots before the holiday freeze.",
+          "Customer Success reports three enterprise accounts already asked about AI routing.",
+          "Legal requires human-readable appeal paths for misrouted tickets.",
+          "Support Ops wants staffing changes sequenced around two training windows.",
+          "Engineering telemetry is split across ticketing, vendor logs, and internal dashboards."
+        ],
+        "deliverable": "A go/no-go recommendation with staged rollout, financial case, engineering plan, risk controls, and customer-facing communication guidance.",
+        "success_criteria": [
+          "Every recommendation has an owner.",
+          "The plan distinguishes facts, estimates, and assumptions.",
+          "At least two risks have mitigations and rollback triggers.",
+          "Final prose is coherent enough for executives.",
+          "Customer, compliance, support, and engineering workstreams are reconciled.",
+          "Review feedback is returned as explicit revisions rather than ignored."
+        ]
+      },
+      "condition": "structured",
+      "transcript": [
+        {
+          "id": "T001",
+          "index": 1,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "kickoff",
+          "speaker": "Orchestrator",
+          "action": "manage_phase",
+          "content": "Orchestrator records a kickoff phase decision, summarizes the current registry state, and keeps ownership explicit.\nPhase decision: Advance kickoff once the gated artifact has two approvals.\nRisk register: Track unresolved dependencies and revision depth.\nHandoff to Researcher: Take ownership of the kickoff phase and return a concrete artifact.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": "H001",
+          "metadata": {}
+        },
+        {
+          "id": "T002",
+          "index": 2,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Researcher",
+          "action": "submit_artifact",
+          "content": "Researcher advances the research work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: Researcher research artifact\nCommitment: Researcher owns the next verification step for research.\nRisk/dependency: Researcher depends on review feedback before the artifact can be reused.\nHandoff to FinancialAnalyst: Use this research artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A001",
+          "review_id": null,
+          "handoff_id": "H002",
+          "metadata": {
+            "opened_handoffs": [
+              "H003",
+              "H004"
+            ],
+            "returned_handoffs": [
+              "H001"
+            ]
+          }
+        },
+        {
+          "id": "T003",
+          "index": 3,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A001",
+          "review_id": "R001",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H003"
+            ]
+          }
+        },
+        {
+          "id": "T004",
+          "index": 4,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: request_revision (model suggested request_revision).\nFeedback: Critic reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A001",
+          "review_id": "R002",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H004"
+            ],
+            "opened_handoffs": [
+              "H005"
+            ]
+          }
+        },
+        {
+          "id": "T005",
+          "index": 5,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Researcher",
+          "action": "revise_artifact",
+          "content": "Researcher advances the research work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: Researcher research artifact\nCommitment: Researcher owns the next verification step for research.\nRisk/dependency: Researcher depends on review feedback before the artifact can be reused.\nHandoff to FinancialAnalyst: Use this research artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A001",
+          "review_id": null,
+          "handoff_id": "H006",
+          "metadata": {
+            "opened_handoffs": [
+              "H007",
+              "H008"
+            ],
+            "returned_handoffs": [
+              "H005"
+            ]
+          }
+        },
+        {
+          "id": "T006",
+          "index": 6,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A001",
+          "review_id": "R003",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H007"
+            ]
+          }
+        },
+        {
+          "id": "T007",
+          "index": 7,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested request_revision).\nFeedback: Critic reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A001",
+          "review_id": "R004",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H008"
+            ],
+            "opened_handoffs": [
+              "H009"
+            ]
+          }
+        },
+        {
+          "id": "T008",
+          "index": 8,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "research",
+          "speaker": "Orchestrator",
+          "action": "manage_phase",
+          "content": "Orchestrator records a research phase decision, summarizes the current registry state, and keeps ownership explicit.\nPhase decision: Advance research once the gated artifact has two approvals.\nRisk register: Track unresolved dependencies and revision depth.\nHandoff to none: Take ownership of the research phase and return a concrete artifact.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T009",
+          "index": 9,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "FinancialAnalyst",
+          "action": "submit_artifact",
+          "content": "FinancialAnalyst advances the analysis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: FinancialAnalyst analysis artifact\nCommitment: FinancialAnalyst owns the next verification step for analysis.\nRisk/dependency: FinancialAnalyst depends on review feedback before the artifact can be reused.\nHandoff to TechLead: Use this analysis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A002",
+          "review_id": null,
+          "handoff_id": "H010",
+          "metadata": {
+            "opened_handoffs": [
+              "H011",
+              "H012"
+            ],
+            "returned_handoffs": [
+              "H002",
+              "H006"
+            ]
+          }
+        },
+        {
+          "id": "T010",
+          "index": 10,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A002",
+          "review_id": "R005",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H011"
+            ]
+          }
+        },
+        {
+          "id": "T011",
+          "index": 11,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: request_revision (model suggested request_revision).\nFeedback: Critic reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A002",
+          "review_id": "R006",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H012"
+            ],
+            "opened_handoffs": [
+              "H013"
+            ]
+          }
+        },
+        {
+          "id": "T012",
+          "index": 12,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "FinancialAnalyst",
+          "action": "revise_artifact",
+          "content": "FinancialAnalyst advances the analysis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: FinancialAnalyst analysis artifact\nCommitment: FinancialAnalyst owns the next verification step for analysis.\nRisk/dependency: FinancialAnalyst depends on review feedback before the artifact can be reused.\nHandoff to TechLead: Use this analysis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A002",
+          "review_id": null,
+          "handoff_id": "H014",
+          "metadata": {
+            "opened_handoffs": [
+              "H015",
+              "H016"
+            ],
+            "returned_handoffs": [
+              "H013"
+            ]
+          }
+        },
+        {
+          "id": "T013",
+          "index": 13,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A002",
+          "review_id": "R007",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H015"
+            ]
+          }
+        },
+        {
+          "id": "T014",
+          "index": 14,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested request_revision).\nFeedback: Critic reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A002",
+          "review_id": "R008",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H016"
+            ],
+            "opened_handoffs": [
+              "H017"
+            ]
+          }
+        },
+        {
+          "id": "T015",
+          "index": 15,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "analysis",
+          "speaker": "Orchestrator",
+          "action": "manage_phase",
+          "content": "Orchestrator records a analysis phase decision, summarizes the current registry state, and keeps ownership explicit.\nPhase decision: Advance analysis once the gated artifact has two approvals.\nRisk register: Track unresolved dependencies and revision depth.\nHandoff to none: Take ownership of the analysis phase and return a concrete artifact.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T016",
+          "index": 16,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "TechLead",
+          "action": "submit_artifact",
+          "content": "TechLead advances the implementation work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: TechLead implementation artifact\nCommitment: TechLead owns the next verification step for implementation.\nRisk/dependency: TechLead depends on review feedback before the artifact can be reused.\nHandoff to ContentWriter: Use this implementation artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A003",
+          "review_id": null,
+          "handoff_id": "H018",
+          "metadata": {
+            "opened_handoffs": [
+              "H019",
+              "H020"
+            ],
+            "returned_handoffs": [
+              "H010",
+              "H014"
+            ]
+          }
+        },
+        {
+          "id": "T017",
+          "index": 17,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A003",
+          "review_id": "R009",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H019"
+            ]
+          }
+        },
+        {
+          "id": "T018",
+          "index": 18,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: request_revision (model suggested request_revision).\nFeedback: Critic reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A003",
+          "review_id": "R010",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H020"
+            ],
+            "opened_handoffs": [
+              "H021"
+            ]
+          }
+        },
+        {
+          "id": "T019",
+          "index": 19,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "TechLead",
+          "action": "revise_artifact",
+          "content": "TechLead advances the implementation work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: TechLead implementation artifact\nCommitment: TechLead owns the next verification step for implementation.\nRisk/dependency: TechLead depends on review feedback before the artifact can be reused.\nHandoff to ContentWriter: Use this implementation artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A003",
+          "review_id": null,
+          "handoff_id": "H022",
+          "metadata": {
+            "opened_handoffs": [
+              "H023",
+              "H024"
+            ],
+            "returned_handoffs": [
+              "H021"
+            ]
+          }
+        },
+        {
+          "id": "T020",
+          "index": 20,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A003",
+          "review_id": "R011",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H023"
+            ]
+          }
+        },
+        {
+          "id": "T021",
+          "index": 21,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested request_revision).\nFeedback: Critic reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A003",
+          "review_id": "R012",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H024"
+            ],
+            "opened_handoffs": [
+              "H025"
+            ]
+          }
+        },
+        {
+          "id": "T022",
+          "index": 22,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "implementation",
+          "speaker": "Orchestrator",
+          "action": "manage_phase",
+          "content": "Orchestrator records a implementation phase decision, summarizes the current registry state, and keeps ownership explicit.\nPhase decision: Advance implementation once the gated artifact has two approvals.\nRisk register: Track unresolved dependencies and revision depth.\nHandoff to none: Take ownership of the implementation phase and return a concrete artifact.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T023",
+          "index": 23,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "ContentWriter",
+          "action": "submit_artifact",
+          "content": "ContentWriter advances the synthesis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: ContentWriter synthesis artifact\nCommitment: ContentWriter owns the next verification step for synthesis.\nRisk/dependency: ContentWriter depends on review feedback before the artifact can be reused.\nHandoff to Orchestrator: Use this synthesis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A004",
+          "review_id": null,
+          "handoff_id": "H026",
+          "metadata": {
+            "opened_handoffs": [
+              "H027",
+              "H028"
+            ],
+            "returned_handoffs": [
+              "H018",
+              "H022"
+            ]
+          }
+        },
+        {
+          "id": "T024",
+          "index": 24,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A004",
+          "review_id": "R013",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H027"
+            ]
+          }
+        },
+        {
+          "id": "T025",
+          "index": 25,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: request_revision (model suggested request_revision).\nFeedback: Critic reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A004",
+          "review_id": "R014",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H028"
+            ],
+            "opened_handoffs": [
+              "H029"
+            ]
+          }
+        },
+        {
+          "id": "T026",
+          "index": 26,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "ContentWriter",
+          "action": "revise_artifact",
+          "content": "ContentWriter advances the synthesis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs.\nArtifact: ContentWriter synthesis artifact\nCommitment: ContentWriter owns the next verification step for synthesis.\nRisk/dependency: ContentWriter depends on review feedback before the artifact can be reused.\nHandoff to Orchestrator: Use this synthesis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "artifact_id": "A004",
+          "review_id": null,
+          "handoff_id": "H030",
+          "metadata": {
+            "opened_handoffs": [
+              "H031",
+              "H032"
+            ],
+            "returned_handoffs": [
+              "H029"
+            ]
+          }
+        },
+        {
+          "id": "T027",
+          "index": 27,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Reviewer",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested approve).\nFeedback: Reviewer reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A004",
+          "review_id": "R015",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H031"
+            ]
+          }
+        },
+        {
+          "id": "T028",
+          "index": 28,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Critic",
+          "action": "review_artifact",
+          "content": "Decision: approve (model suggested request_revision).\nFeedback: Critic reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.\nRequired changes: Name the downstream owner.; Tighten the verification signal.\nEvidence: Artifact has explicit dependencies.; Handoff request is actionable.",
+          "artifact_id": "A004",
+          "review_id": "R016",
+          "handoff_id": null,
+          "metadata": {
+            "returned_handoffs": [
+              "H032"
+            ],
+            "opened_handoffs": [
+              "H033"
+            ]
+          }
+        },
+        {
+          "id": "T029",
+          "index": 29,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "synthesis",
+          "speaker": "Orchestrator",
+          "action": "manage_phase",
+          "content": "Orchestrator records a synthesis phase decision, summarizes the current registry state, and keeps ownership explicit.\nPhase decision: Advance synthesis once the gated artifact has two approvals.\nRisk register: Track unresolved dependencies and revision depth.\nHandoff to none: Take ownership of the synthesis phase and return a concrete artifact.",
+          "artifact_id": null,
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        },
+        {
+          "id": "T030",
+          "index": 30,
+          "condition": "structured",
+          "task_title": "AI support platform migration",
+          "phase": "finalization",
+          "speaker": "Orchestrator",
+          "action": "finalize",
+          "content": "Orchestrator closes the collaboration with an integrated final artifact, returns the last handoff, and records the remaining risks for follow-up.\nFinal report: Integrated delivery plan\nUnresolved risks: Residual uncertainty remains around stakeholder appetite.\nNext steps: Publish the plan.; Assign owners.; Schedule follow-up review.",
+          "artifact_id": "A005",
+          "review_id": null,
+          "handoff_id": null,
+          "metadata": {}
+        }
+      ],
+      "artifacts": [
+        {
+          "id": "A001",
+          "artifact_type": "research_brief",
+          "title": "Researcher research artifact",
+          "author": "Researcher",
+          "body": "Researcher produces a concrete research artifact with assumptions, evidence, owner commitments, acceptance checks, and downstream use notes. The artifact is intentionally detailed enough for reviewers to request specific revisions and for the next role to depend on it.",
+          "phase": "research",
+          "dependencies": [
+            "A001",
+            "A002",
+            "A003",
+            "A004"
+          ],
+          "revision": 1,
+          "status": "approved",
+          "created_turn": "T002",
+          "updated_turn": "T005",
+          "review_ids": [
+            "R001",
+            "R002",
+            "R003",
+            "R004"
+          ]
+        },
+        {
+          "id": "A002",
+          "artifact_type": "analysis_memo",
+          "title": "FinancialAnalyst analysis artifact",
+          "author": "FinancialAnalyst",
+          "body": "FinancialAnalyst produces a concrete analysis artifact with assumptions, evidence, owner commitments, acceptance checks, and downstream use notes. The artifact is intentionally detailed enough for reviewers to request specific revisions and for the next role to depend on it.",
+          "phase": "analysis",
+          "dependencies": [
+            "A001",
+            "A002",
+            "A003",
+            "A004"
+          ],
+          "revision": 1,
+          "status": "approved",
+          "created_turn": "T009",
+          "updated_turn": "T012",
+          "review_ids": [
+            "R005",
+            "R006",
+            "R007",
+            "R008"
+          ]
+        },
+        {
+          "id": "A003",
+          "artifact_type": "implementation_plan",
+          "title": "TechLead implementation artifact",
+          "author": "TechLead",
+          "body": "TechLead produces a concrete implementation artifact with assumptions, evidence, owner commitments, acceptance checks, and downstream use notes. The artifact is intentionally detailed enough for reviewers to request specific revisions and for the next role to depend on it.",
+          "phase": "implementation",
+          "dependencies": [
+            "A001",
+            "A002",
+            "A003",
+            "A004"
+          ],
+          "revision": 1,
+          "status": "approved",
+          "created_turn": "T016",
+          "updated_turn": "T019",
+          "review_ids": [
+            "R009",
+            "R010",
+            "R011",
+            "R012"
+          ]
+        },
+        {
+          "id": "A004",
+          "artifact_type": "report_draft",
+          "title": "ContentWriter synthesis artifact",
+          "author": "ContentWriter",
+          "body": "ContentWriter produces a concrete synthesis artifact with assumptions, evidence, owner commitments, acceptance checks, and downstream use notes. The artifact is intentionally detailed enough for reviewers to request specific revisions and for the next role to depend on it.",
+          "phase": "synthesis",
+          "dependencies": [
+            "A001",
+            "A002",
+            "A003",
+            "A004"
+          ],
+          "revision": 1,
+          "status": "approved",
+          "created_turn": "T023",
+          "updated_turn": "T026",
+          "review_ids": [
+            "R013",
+            "R014",
+            "R015",
+            "R016"
+          ]
+        },
+        {
+          "id": "A005",
+          "artifact_type": "final_report",
+          "title": "Integrated delivery plan",
+          "author": "Orchestrator",
+          "body": "The final report integrates research, analysis, implementation planning, review feedback, Critic objections, and returned handoffs into one coherent plan with owners, controls, and follow-up checks. It preserves the source packet boundaries, names assumptions separately from facts, and makes clear which commitments depend on later validation by the responsible role.",
+          "phase": "finalization",
+          "dependencies": [
+            "A001",
+            "A002",
+            "A003",
+            "A004"
+          ],
+          "revision": 0,
+          "status": "final",
+          "created_turn": "T030",
+          "updated_turn": "T030",
+          "review_ids": []
+        }
+      ],
+      "reviews": [
+        {
+          "id": "R001",
+          "artifact_id": "A001",
+          "artifact_revision": 0,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T003"
+        },
+        {
+          "id": "R002",
+          "artifact_id": "A001",
+          "artifact_revision": 0,
+          "reviewer": "Critic",
+          "decision": "request_revision",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Arena policy requires the Critic to force a substantive revision before approval.",
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T004"
+        },
+        {
+          "id": "R003",
+          "artifact_id": "A001",
+          "artifact_revision": 1,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T006"
+        },
+        {
+          "id": "R004",
+          "artifact_id": "A001",
+          "artifact_revision": 1,
+          "reviewer": "Critic",
+          "decision": "approve",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T007"
+        },
+        {
+          "id": "R005",
+          "artifact_id": "A002",
+          "artifact_revision": 0,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T010"
+        },
+        {
+          "id": "R006",
+          "artifact_id": "A002",
+          "artifact_revision": 0,
+          "reviewer": "Critic",
+          "decision": "request_revision",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Arena policy requires the Critic to force a substantive revision before approval.",
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T011"
+        },
+        {
+          "id": "R007",
+          "artifact_id": "A002",
+          "artifact_revision": 1,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T013"
+        },
+        {
+          "id": "R008",
+          "artifact_id": "A002",
+          "artifact_revision": 1,
+          "reviewer": "Critic",
+          "decision": "approve",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T014"
+        },
+        {
+          "id": "R009",
+          "artifact_id": "A003",
+          "artifact_revision": 0,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T017"
+        },
+        {
+          "id": "R010",
+          "artifact_id": "A003",
+          "artifact_revision": 0,
+          "reviewer": "Critic",
+          "decision": "request_revision",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Arena policy requires the Critic to force a substantive revision before approval.",
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T018"
+        },
+        {
+          "id": "R011",
+          "artifact_id": "A003",
+          "artifact_revision": 1,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T020"
+        },
+        {
+          "id": "R012",
+          "artifact_id": "A003",
+          "artifact_revision": 1,
+          "reviewer": "Critic",
+          "decision": "approve",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T021"
+        },
+        {
+          "id": "R013",
+          "artifact_id": "A004",
+          "artifact_revision": 0,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T024"
+        },
+        {
+          "id": "R014",
+          "artifact_id": "A004",
+          "artifact_revision": 0,
+          "reviewer": "Critic",
+          "decision": "request_revision",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Arena policy requires the Critic to force a substantive revision before approval.",
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T025"
+        },
+        {
+          "id": "R015",
+          "artifact_id": "A004",
+          "artifact_revision": 1,
+          "reviewer": "Reviewer",
+          "decision": "approve",
+          "model_decision": "approve",
+          "feedback": "Reviewer reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T027"
+        },
+        {
+          "id": "R016",
+          "artifact_id": "A004",
+          "artifact_revision": 1,
+          "reviewer": "Critic",
+          "decision": "approve",
+          "model_decision": "request_revision",
+          "feedback": "Critic reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase.",
+          "required_changes": [
+            "Name the downstream owner.",
+            "Tighten the verification signal."
+          ],
+          "turn_id": "T028"
+        }
+      ],
+      "handoffs": [
+        {
+          "id": "H001",
+          "from_agent": "Orchestrator",
+          "to_agent": "Researcher",
+          "request": "Take ownership of the kickoff phase and return a concrete artifact.",
+          "kind": "assignment",
+          "phase": "kickoff",
+          "opened_turn": "T001",
+          "status": "returned",
+          "artifact_id": null,
+          "returned_turn": "T002",
+          "return_summary": "Researcher advances the research work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H002",
+          "from_agent": "Researcher",
+          "to_agent": "FinancialAnalyst",
+          "request": "Use this research artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "research",
+          "opened_turn": "T002",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T009",
+          "return_summary": "FinancialAnalyst advances the analysis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H003",
+          "from_agent": "Researcher",
+          "to_agent": "Reviewer",
+          "request": "Review A001 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "research",
+          "opened_turn": "T002",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T003",
+          "return_summary": "Reviewer reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H004",
+          "from_agent": "Researcher",
+          "to_agent": "Critic",
+          "request": "Review A001 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "research",
+          "opened_turn": "T002",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T004",
+          "return_summary": "Critic reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H005",
+          "from_agent": "Critic",
+          "to_agent": "Researcher",
+          "request": "Revise A001 revision 0: Arena policy requires the Critic to force a substantive revision before approval.; Name the downstream owner.; Tighten the verification signal.",
+          "kind": "revision_request",
+          "phase": "research",
+          "opened_turn": "T004",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T005",
+          "return_summary": "Researcher advances the research work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H006",
+          "from_agent": "Researcher",
+          "to_agent": "FinancialAnalyst",
+          "request": "Use this research artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "research",
+          "opened_turn": "T005",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T009",
+          "return_summary": "FinancialAnalyst advances the analysis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H007",
+          "from_agent": "Researcher",
+          "to_agent": "Reviewer",
+          "request": "Review A001 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "research",
+          "opened_turn": "T005",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T006",
+          "return_summary": "Reviewer reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H008",
+          "from_agent": "Researcher",
+          "to_agent": "Critic",
+          "request": "Review A001 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "research",
+          "opened_turn": "T005",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T007",
+          "return_summary": "Critic reviews Researcher with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H009",
+          "from_agent": "Researcher",
+          "to_agent": "Orchestrator",
+          "request": "Accept approved A001 (research_brief) for phase signoff and dependency release to the next role.",
+          "kind": "phase_acceptance",
+          "phase": "research",
+          "opened_turn": "T007",
+          "status": "returned",
+          "artifact_id": "A001",
+          "returned_turn": "T008",
+          "return_summary": "Orchestrator records a research phase decision, summarizes the current registry state, and keeps ownership explicit."
+        },
+        {
+          "id": "H010",
+          "from_agent": "FinancialAnalyst",
+          "to_agent": "TechLead",
+          "request": "Use this analysis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "analysis",
+          "opened_turn": "T009",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T016",
+          "return_summary": "TechLead advances the implementation work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H011",
+          "from_agent": "FinancialAnalyst",
+          "to_agent": "Reviewer",
+          "request": "Review A002 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "analysis",
+          "opened_turn": "T009",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T010",
+          "return_summary": "Reviewer reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H012",
+          "from_agent": "FinancialAnalyst",
+          "to_agent": "Critic",
+          "request": "Review A002 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "analysis",
+          "opened_turn": "T009",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T011",
+          "return_summary": "Critic reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H013",
+          "from_agent": "Critic",
+          "to_agent": "FinancialAnalyst",
+          "request": "Revise A002 revision 0: Arena policy requires the Critic to force a substantive revision before approval.; Name the downstream owner.; Tighten the verification signal.",
+          "kind": "revision_request",
+          "phase": "analysis",
+          "opened_turn": "T011",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T012",
+          "return_summary": "FinancialAnalyst advances the analysis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H014",
+          "from_agent": "FinancialAnalyst",
+          "to_agent": "TechLead",
+          "request": "Use this analysis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "analysis",
+          "opened_turn": "T012",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T016",
+          "return_summary": "TechLead advances the implementation work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H015",
+          "from_agent": "FinancialAnalyst",
+          "to_agent": "Reviewer",
+          "request": "Review A002 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "analysis",
+          "opened_turn": "T012",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T013",
+          "return_summary": "Reviewer reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H016",
+          "from_agent": "FinancialAnalyst",
+          "to_agent": "Critic",
+          "request": "Review A002 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "analysis",
+          "opened_turn": "T012",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T014",
+          "return_summary": "Critic reviews FinancialAnalyst with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H017",
+          "from_agent": "FinancialAnalyst",
+          "to_agent": "Orchestrator",
+          "request": "Accept approved A002 (analysis_memo) for phase signoff and dependency release to the next role.",
+          "kind": "phase_acceptance",
+          "phase": "analysis",
+          "opened_turn": "T014",
+          "status": "returned",
+          "artifact_id": "A002",
+          "returned_turn": "T015",
+          "return_summary": "Orchestrator records a analysis phase decision, summarizes the current registry state, and keeps ownership explicit."
+        },
+        {
+          "id": "H018",
+          "from_agent": "TechLead",
+          "to_agent": "ContentWriter",
+          "request": "Use this implementation artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "implementation",
+          "opened_turn": "T016",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T023",
+          "return_summary": "ContentWriter advances the synthesis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H019",
+          "from_agent": "TechLead",
+          "to_agent": "Reviewer",
+          "request": "Review A003 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "implementation",
+          "opened_turn": "T016",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T017",
+          "return_summary": "Reviewer reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H020",
+          "from_agent": "TechLead",
+          "to_agent": "Critic",
+          "request": "Review A003 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "implementation",
+          "opened_turn": "T016",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T018",
+          "return_summary": "Critic reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H021",
+          "from_agent": "Critic",
+          "to_agent": "TechLead",
+          "request": "Revise A003 revision 0: Arena policy requires the Critic to force a substantive revision before approval.; Name the downstream owner.; Tighten the verification signal.",
+          "kind": "revision_request",
+          "phase": "implementation",
+          "opened_turn": "T018",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T019",
+          "return_summary": "TechLead advances the implementation work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H022",
+          "from_agent": "TechLead",
+          "to_agent": "ContentWriter",
+          "request": "Use this implementation artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "implementation",
+          "opened_turn": "T019",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T023",
+          "return_summary": "ContentWriter advances the synthesis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H023",
+          "from_agent": "TechLead",
+          "to_agent": "Reviewer",
+          "request": "Review A003 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "implementation",
+          "opened_turn": "T019",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T020",
+          "return_summary": "Reviewer reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H024",
+          "from_agent": "TechLead",
+          "to_agent": "Critic",
+          "request": "Review A003 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "implementation",
+          "opened_turn": "T019",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T021",
+          "return_summary": "Critic reviews TechLead with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H025",
+          "from_agent": "TechLead",
+          "to_agent": "Orchestrator",
+          "request": "Accept approved A003 (implementation_plan) for phase signoff and dependency release to the next role.",
+          "kind": "phase_acceptance",
+          "phase": "implementation",
+          "opened_turn": "T021",
+          "status": "returned",
+          "artifact_id": "A003",
+          "returned_turn": "T022",
+          "return_summary": "Orchestrator records a implementation phase decision, summarizes the current registry state, and keeps ownership explicit."
+        },
+        {
+          "id": "H026",
+          "from_agent": "ContentWriter",
+          "to_agent": "Orchestrator",
+          "request": "Use this synthesis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "synthesis",
+          "opened_turn": "T023",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T029",
+          "return_summary": "Orchestrator records a synthesis phase decision, summarizes the current registry state, and keeps ownership explicit."
+        },
+        {
+          "id": "H027",
+          "from_agent": "ContentWriter",
+          "to_agent": "Reviewer",
+          "request": "Review A004 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "synthesis",
+          "opened_turn": "T023",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T024",
+          "return_summary": "Reviewer reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H028",
+          "from_agent": "ContentWriter",
+          "to_agent": "Critic",
+          "request": "Review A004 revision 0 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "synthesis",
+          "opened_turn": "T023",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T025",
+          "return_summary": "Critic reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H029",
+          "from_agent": "Critic",
+          "to_agent": "ContentWriter",
+          "request": "Revise A004 revision 0: Arena policy requires the Critic to force a substantive revision before approval.; Name the downstream owner.; Tighten the verification signal.",
+          "kind": "revision_request",
+          "phase": "synthesis",
+          "opened_turn": "T025",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T026",
+          "return_summary": "ContentWriter advances the synthesis work by grounding the next artifact in the task packet, naming dependencies, and returning any open handoffs."
+        },
+        {
+          "id": "H030",
+          "from_agent": "ContentWriter",
+          "to_agent": "Orchestrator",
+          "request": "Use this synthesis artifact as an input, identify gaps, and return a specific downstream contribution.",
+          "kind": "downstream",
+          "phase": "synthesis",
+          "opened_turn": "T026",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T029",
+          "return_summary": "Orchestrator records a synthesis phase decision, summarizes the current registry state, and keeps ownership explicit."
+        },
+        {
+          "id": "H031",
+          "from_agent": "ContentWriter",
+          "to_agent": "Reviewer",
+          "request": "Review A004 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "synthesis",
+          "opened_turn": "T026",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T027",
+          "return_summary": "Reviewer reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H032",
+          "from_agent": "ContentWriter",
+          "to_agent": "Critic",
+          "request": "Review A004 revision 1 for dependency clarity, handoff clarity, owner commitments, and downstream usability.",
+          "kind": "review_request",
+          "phase": "synthesis",
+          "opened_turn": "T026",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T028",
+          "return_summary": "Critic reviews ContentWriter with concrete feedback tied to dependencies, handoff clarity, and whether the artifact can support the next phase."
+        },
+        {
+          "id": "H033",
+          "from_agent": "ContentWriter",
+          "to_agent": "Orchestrator",
+          "request": "Accept approved A004 (report_draft) for phase signoff and dependency release to the next role.",
+          "kind": "phase_acceptance",
+          "phase": "synthesis",
+          "opened_turn": "T028",
+          "status": "returned",
+          "artifact_id": "A004",
+          "returned_turn": "T029",
+          "return_summary": "Orchestrator records a synthesis phase decision, summarizes the current registry state, and keeps ownership explicit."
+        }
+      ],
+      "health": {
+        "turn_count": 30,
+        "artifact_count": 5,
+        "approved_artifact_count": 4,
+        "review_count": 16,
+        "critic_rejection_count": 4,
+        "max_revision_depth": 1,
+        "handoff_count": 33,
+        "handoffs_by_kind": {
+          "assignment": 1,
+          "downstream": 8,
+          "review_request": 16,
+          "revision_request": 4,
+          "phase_acceptance": 4,
+          "baseline": 0
+        },
+        "open_handoff_count": 0,
+        "handoff_completion_rate": 1.0,
+        "contributors": [
+          "ContentWriter",
+          "Critic",
+          "FinancialAnalyst",
+          "Orchestrator",
+          "Researcher",
+          "Reviewer",
+          "TechLead"
+        ],
+        "all_roles_contributed": true
+      },
+      "checks": {
+        "Orchestrator": {
+          "Researcher": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows Researcher participating in the collaboration.",
+              "T002 gives additional context for Researcher's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate Researcher's collaboration, handoff clarity, communication, and follow-through."
+          },
+          "FinancialAnalyst": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows FinancialAnalyst participating in the collaboration.",
+              "T002 gives additional context for FinancialAnalyst's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate FinancialAnalyst's collaboration, handoff clarity, communication, and follow-through."
+          },
+          "TechLead": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows TechLead participating in the collaboration.",
+              "T002 gives additional context for TechLead's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate TechLead's collaboration, handoff clarity, communication, and follow-through."
+          },
+          "ContentWriter": {
+            "collaboration": 4,
+            "handoff_clarity": 4,
+            "reliability": 4,
+            "communication": 4,
+            "initiative": 4,
+            "overall": 4,
+            "confidence": 4,
+            "insufficient_evidence": false,
+            "evidence": [
+              "T001 shows ContentWriter participating in the collaboration.",
+              "T002 gives additional context for ContentWriter's handoff behavior."
+            ],
+            "rationale": "The transcript gives enough evidence to rate ContentWriter's collaboration, handoff clarity, communication, and follow-through."
+          }
+        }
+      },
+      "reference_timeouts": [],
+      "aggregate": {
+        "received": {
+          "ContentWriter": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          },
+          "Critic": {
+            "collaboration": null,
+            "handoff_clarity": null,
+            "reliability": null,
+            "communication": null,
+            "initiative": null,
+            "overall": null
+          },
+          "FinancialAnalyst": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          },
+          "Orchestrator": {
+            "collaboration": null,
+            "handoff_clarity": null,
+            "reliability": null,
+            "communication": null,
+            "initiative": null,
+            "overall": null
+          },
+          "Researcher": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          },
+          "Reviewer": {
+            "collaboration": null,
+            "handoff_clarity": null,
+            "reliability": null,
+            "communication": null,
+            "initiative": null,
+            "overall": null
+          },
+          "TechLead": {
+            "collaboration": 4.0,
+            "handoff_clarity": 4.0,
+            "reliability": 4.0,
+            "communication": 4.0,
+            "initiative": 4.0,
+            "overall": 4.0
+          }
+        },
+        "agreement": {
+          "ContentWriter": {
+            "std": 0.0,
+            "spread": 0.0
+          },
+          "Critic": {
+            "std": 0.0,
+            "spread": null
+          },
+          "FinancialAnalyst": {
+            "std": 0.0,
+            "spread": 0.0
+          },
+          "Orchestrator": {
+            "std": 0.0,
+            "spread": null
+          },
+          "Researcher": {
+            "std": 0.0,
+            "spread": 0.0
+          },
+          "Reviewer": {
+            "std": 0.0,
+            "spread": null
+          },
+          "TechLead": {
+            "std": 0.0,
+            "spread": 0.0
+          }
+        },
+        "asymmetry": {},
+        "evidence": {
+          "checks": 4,
+          "avg_items": 2.0,
+          "insufficient_rate": 0.0,
+          "avg_confidence": 4.0,
+          "citation_rate": 1.0
+        }
+      }
+    }
+  ]
+}
